@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Калькулятор Маны v5.1 — D&D 5e</title>
+    <title>Калькулятор Маны v5.2 — D&D 5e</title>
     <style>
         :root {
             --bg: #0a0a14; --panel: #12122a; --accent: #7b2ff7; --accent2: #c084fc;
@@ -121,13 +121,21 @@
         .footer { text-align:center; color:#3a3a50; font-size:0.6em; padding:12px; margin-top:6px; }
         .school-options-label { font-size:0.7em; color:#9090a0; display:block; margin-bottom:4px; }
         .mods-list { color:var(--gold); font-size:0.8em; line-height:1.5; margin-top:4px; word-break:break-word; }
+        .saved-group { margin-bottom:12px; }
+        .saved-group h4 { color:var(--accent2); margin:8px 0 4px; }
+        .saved-spell-item {
+            background:var(--card); border:1px solid var(--border); border-radius:8px; padding:8px 12px;
+            margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;
+        }
+        .saved-spell-info { flex:1; font-size:0.85em; }
+        .saved-spell-actions button { background:none; border:1px solid var(--border); color:var(--text); padding:4px 10px; border-radius:6px; font-size:0.8em; cursor:pointer; margin-left:6px; }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
         <h1>✨ Калькулятор Маны ✨</h1>
-        <div class="sub">Магия Свободной Воли для D&D 5e<br>v5.1 • Группы модов • Время действия</div>
+        <div class="sub">Магия Свободной Воли для D&D 5e<br>v5.2 • Сохранение • Группы</div>
     </div>
 
     <!-- Характеристики -->
@@ -135,15 +143,15 @@
         <div class="step">Персонаж</div>
         <h2>🧙 Характеристики</h2>
         <div class="row4">
-            <div class="scard"><div class="l">Уровень</div><input type="number" id="L" value="5" min="1" max="20" inputmode="numeric"></div>
-            <div class="scard"><div class="l">Интеллект</div><input type="number" id="I" value="3" min="-5" max="10" inputmode="numeric"></div>
-            <div class="scard"><div class="l">💰 Макс. маны</div><div class="v" id="maxM">30</div></div>
-            <div class="scard"><div class="l">⚠️ Лимит</div><div class="v" id="limM">15</div></div>
+            <div class="scard"><div class="l">Уровень</div><input type="number" id="L" value="1" min="1" max="20" inputmode="numeric"></div>
+            <div class="scard"><div class="l">Интеллект</div><input type="number" id="I" value="0" min="-5" max="10" inputmode="numeric"></div>
+            <div class="scard"><div class="l">💰 Макс. маны</div><div class="v" id="maxM">3</div></div>
+            <div class="scard"><div class="l">⚠️ Лимит</div><div class="v" id="limM">2</div></div>
         </div>
         <div class="row5">
             <div class="scard" style="grid-column: span 5;">
                 <div class="l">🌟 Доступный уровень основы</div>
-                <div class="v" id="availBase">2 — Средний</div>
+                <div class="v" id="availBase">0 — Искра</div>
             </div>
         </div>
     </div>
@@ -153,9 +161,10 @@
         <div class="step">Шаг 1</div>
         <h2>🔮 Основа заклинания</h2>
         <select id="S1">
+            <option value="" disabled selected>-- Выбрать основу --</option>
             <option value="1" data-sl="0">0 — Искра (Cantrip) — 1 мана</option>
             <option value="2" data-sl="11">1 — Простой — 2 маны</option>
-            <option value="4" data-sl="12" selected>2 — Средний — 4 маны</option>
+            <option value="4" data-sl="12">2 — Средний — 4 маны</option>
             <option value="6" data-sl="13">3 — Значительный — 6 маны</option>
             <option value="8" data-sl="14">4 — Сложный — 8 маны</option>
             <option value="12" data-sl="15">5 — Великий — 12 маны</option>
@@ -197,7 +206,7 @@
                     <option value="5" data-dice="4к6" data-name="Яд" data-min-level="17">Яд (4к6) — +5</option>
                 </select>
             </div>
-            <!-- Остальные школы (сокращены, но полные) -->
+            <!-- Лечение -->
             <div id="healOptions" class="school-option-block" style="display:none;">
                 <label class="school-options-label">💚 Форма лечения</label>
                 <select id="healForm">
@@ -208,6 +217,18 @@
                     <option value="10" data-heal-dice="6к8" data-name="Воскрешение" data-min-level="17">Воскрешение/Регенерация — 6к8 — +10</option>
                 </select>
             </div>
+            <!-- Ограждение (изменён) -->
+            <div id="abjurOptions" class="school-option-block" style="display:none;">
+                <label class="school-options-label">🛡 Тип защиты</label>
+                <select id="abjurationForm">
+                    <option value="0" data-abjur-bonus="2" data-abjur-name="Личный щит" data-min-level="1">Личный щит +2 КД — +0</option>
+                    <option value="1" data-abjur-bonus="2" data-abjur-name="Левитирующий щит" data-min-level="2">Левитирующий щит +2 КД (авто) — +1</option>
+                    <option value="2" data-abjur-bonus="2" data-abjur-name="Щит на союзника" data-min-level="4">Щит на союзника +2 КД (1 цель) — +2</option>
+                    <option value="3" data-abjur-bonus="2" data-abjur-name="Массовый щит" data-min-level="6">Массовый щит +2 КД (группа) — +3</option>
+                    <option value="5" data-abjur-bonus="2" data-abjur-name="Непроницаемый барьер" data-min-level="17">Непроницаемый барьер +2 КД — +5</option>
+                </select>
+            </div>
+            <!-- Остальные школы (без изменений) -->
             <div id="illusOptions" class="school-option-block" style="display:none;">
                 <label class="school-options-label">🎭 Длительность иллюзии</label>
                 <select id="illusionForm">
@@ -239,17 +260,6 @@
                     <option value="5" data-necro-name="Средняя нежить" data-necro-dice="3к6" data-min-level="12">Средняя нежить (гуль, 2-3 зомби) (3к6) — +5</option>
                     <option value="7" data-necro-name="Сильная нежить" data-necro-dice="4к8" data-min-level="17">Сильная нежить (призрак, 4-6 зомби) (4к8) — +7</option>
                     <option value="10" data-necro-name="Армия нежити" data-necro-dice="6к8" data-min-level="17">Армия нежити (6к8) — +10</option>
-                </select>
-            </div>
-            <div id="abjurOptions" class="school-option-block" style="display:none;">
-                <label class="school-options-label">🛡 Тип защиты</label>
-                <select id="abjurationForm">
-                    <option value="0" data-abjur-name="Личный щит +2" data-abjur-bonus="+2 КД" data-min-level="1">Личный щит +2 — +0</option>
-                    <option value="1" data-abjur-name="Левитирующий щит" data-abjur-bonus="+2 КД (авто)" data-min-level="2">Левитирующий щит (авто) — +1</option>
-                    <option value="2" data-abjur-name="Щит на союзника" data-abjur-bonus="+2 КД (1 цель)" data-min-level="4">Щит на союзника (1 цель) — +2</option>
-                    <option value="3" data-abjur-name="Массовый щит" data-abjur-bonus="+2 КД (группа)" data-min-level="6">Массовый щит (группа) — +3</option>
-                    <option value="5" data-abjur-name="Сфера защиты" data-abjur-bonus="+4 КД (сфера)" data-min-level="12">Сфера защиты — +5</option>
-                    <option value="7" data-abjur-name="Непроницаемый барьер" data-abjur-bonus="+5 КД (барьер)" data-min-level="17">Непроницаемый барьер — +7</option>
                 </select>
             </div>
             <div id="enchOptions" class="school-option-block" style="display:none;">
@@ -295,7 +305,7 @@
         </div>
     </div>
 
-    <!-- Усиление -->
+    <!-- Усиление (теперь с блокировкой) -->
     <div class="panel">
         <div class="step">Шаг 3</div>
         <h2>⚡ Усиление заклинания</h2>
@@ -306,6 +316,7 @@
             <option value="7" data-mult="3">Сильное (×3) — +7</option>
             <option value="11" data-mult="4">Максимальное (×4) — +11</option>
         </select>
+        <div id="boostWarning" style="color:#f87171; font-size:0.8em; margin-top:6px; display:none;">⚠️ Усиление недоступно для этого заклинания</div>
     </div>
 
     <!-- Модификаторы -->
@@ -360,13 +371,13 @@
     <div class="panel">
         <h2>📊 Итоговый расчёт</h2>
         <div class="row3">
-            <div class="rscard"><div class="rl">Основа</div><div class="rv" id="r1">4</div></div>
+            <div class="rscard"><div class="rl">Основа</div><div class="rv" id="r1">0</div></div>
             <div class="rscard"><div class="rl">Школа+Усил.</div><div class="rv" id="r2">0</div></div>
             <div class="rscard"><div class="rl">Моды</div><div class="rv" id="r3">0</div></div>
         </div>
         <div class="row3" style="margin-top:8px;">
-            <div class="rscard big" id="rtc"><div class="rl">⚡ ИТОГО МАНА</div><div class="rv" id="rt">4</div></div>
-            <div class="rscard"><div class="rl">🎯 СЛ проверки</div><div class="rv" id="rs">12</div></div>
+            <div class="rscard big" id="rtc"><div class="rl">⚡ ИТОГО МАНА</div><div class="rv" id="rt">0</div></div>
+            <div class="rscard"><div class="rl">🎯 СЛ проверки</div><div class="rv" id="rs">—</div></div>
             <div class="rscard" id="rlc"><div class="rl">📏 Лимит</div><div class="rv" id="rlv">ОК</div></div>
         </div>
     </div>
@@ -383,8 +394,8 @@
             <input type="text" class="action-condition-input" id="actionCondition" placeholder="Условие для отложенного...">
         </div>
         <div class="preview-grid">
-            <div class="preview-item"><div class="pl" id="previewMainLabel">🔥 Тип / Лечение</div><div class="pv" id="previewMain">Огонь (1к6)</div></div>
-            <div class="preview-item"><div class="pl" id="previewDiceLabel">🦴 Кости урона/хила</div><div class="pv" id="previewDice">1к6</div></div>
+            <div class="preview-item"><div class="pl" id="previewMainLabel">🔥 Тип / Лечение</div><div class="pv" id="previewMain">—</div></div>
+            <div class="preview-item"><div class="pl" id="previewDiceLabel">🦴 Кости урона/хила</div><div class="pv" id="previewDice">—</div></div>
             <div class="preview-item"><div class="pl">⏱ Продолжительность</div><div class="pv" id="previewDuration">Мгновенно</div></div>
             <div class="preview-item"><div class="pl">🧩 Компоненты</div><div class="pv" id="previewComponents">Вербальный, Соматический</div></div>
         </div>
@@ -395,11 +406,28 @@
         </div>
     </div>
 
-    <div class="panel" style="margin-top:10px;">
-        <h2>💾 Действия</h2>
+    <!-- Сохранение -->
+    <div class="panel" id="savePanel">
+        <h2>💾 Сохранить заклинание</h2>
+        <div class="row2">
+            <select id="groupSelect"></select>
+            <input type="text" id="newGroupName" placeholder="Новая группа">
+        </div>
+        <button id="saveSpellBtn" class="btn">Сохранить</button>
+    </div>
+
+    <!-- Кнопка копирования -->
+    <div class="panel">
+        <h2>📋 Действия</h2>
         <button id="copyBtn" class="btn blu">📋 Копировать заклинание</button>
     </div>
-    <div class="footer">Магия Свободной Воли v5.1 • Время действия • Группы</div>
+
+    <!-- Сохранённые -->
+    <div class="panel" id="savedSpellsPanel">
+        <h2>📚 Сохранённые заклинания</h2>
+        <div id="savedSpellsList">Нет сохранённых заклинаний</div>
+    </div>
+    <div class="footer">Магия Свободной Воли v5.2 • Сохранение • Группы</div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -414,6 +442,7 @@
         const S1 = document.getElementById('S1');
         const S2 = document.getElementById('S2');
         const S3 = document.getElementById('S3');
+        const boostWarning = document.getElementById('boostWarning');
         const damageType = document.getElementById('damageType');
         const healForm = document.getElementById('healForm');
         const illusionForm = document.getElementById('illusionForm');
@@ -437,6 +466,10 @@
         const previewDuration = document.getElementById('previewDuration'), previewComponents = document.getElementById('previewComponents');
         const compDetails = document.getElementById('compDetails');
         const copyBtn = document.getElementById('copyBtn');
+        const saveBtn = document.getElementById('saveSpellBtn');
+        const groupSelect = document.getElementById('groupSelect');
+        const newGroupInput = document.getElementById('newGroupName');
+        const savedList = document.getElementById('savedSpellsList');
 
         const schoolSelectMap = {
             'evoc': damageType, 'heal': healForm, 'illus': illusionForm, 'trans': transmutationForm,
@@ -459,6 +492,10 @@
             23: ['evoc','illus','trans','necro','abjur','ench','divin','conju','heal','uni']
         };
 
+        // Хранилище заклинаний
+        let spellsData = JSON.parse(localStorage.getItem('dnd_spells') || '{"groups":{}}');
+        function saveSpellsData() { localStorage.setItem('dnd_spells', JSON.stringify(spellsData)); }
+
         function getMaxBaseByLevel(level) {
             if (level >= 15) return 23; if (level >= 13) return 17; if (level >= 11) return 12;
             if (level >= 9) return 8; if (level >= 7) return 6; if (level >= 5) return 4;
@@ -474,12 +511,12 @@
             const maxBase = getMaxBaseByLevel(level);
             const options = S1.options;
             let currentValid = true;
-            if (parseInt(S1.value) > maxBase) currentValid = false;
+            if (S1.value && parseInt(S1.value) > maxBase) currentValid = false;
             for (let i = 0; i < options.length; i++) {
-                if (parseInt(options[i].value) > maxBase) options[i].setAttribute('disabled', '');
+                if (options[i].value && parseInt(options[i].value) > maxBase) options[i].setAttribute('disabled', '');
                 else options[i].removeAttribute('disabled');
             }
-            if (!currentValid) {
+            if (!currentValid && S1.value) {
                 for (let i = options.length-1; i >= 0; i--) {
                     if (!options[i].disabled) { S1.selectedIndex = i; break; }
                 }
@@ -487,7 +524,24 @@
             availBase.textContent = getBaseDescription(maxBase);
         }
 
+        function hasScalableValue() {
+            if (!S1.value) return false;
+            const school = S2.options[S2.selectedIndex].getAttribute('data-school');
+            const select = schoolSelectMap[school];
+            if (!select || !select.options[select.selectedIndex]) return false;
+            const opt = select.options[select.selectedIndex];
+            return !!(opt && (opt.hasAttribute('data-dice') || opt.hasAttribute('data-heal-dice') || opt.hasAttribute('data-necro-dice') || opt.hasAttribute('data-abjur-bonus')));
+        }
+
+        function updateBoostAvailability() {
+            const scalable = hasScalableValue();
+            S3.disabled = !scalable;
+            boostWarning.style.display = scalable ? 'none' : 'block';
+            if (!scalable) { S3.value = '0'; }
+        }
+
         function updateSchoolAvailability() {
+            if (!S1.value) return;
             const baseVal = parseInt(S1.value);
             const allowed = schoolAvailability[baseVal] || schoolAvailability[1];
             const options = S2.options;
@@ -495,17 +549,14 @@
             let firstAvailable = -1;
             for (let i = 0; i < options.length; i++) {
                 const school = options[i].getAttribute('data-school');
-                if (allowed.includes(school)) {
-                    options[i].removeAttribute('disabled');
-                    if (firstAvailable === -1) firstAvailable = i;
-                } else {
-                    options[i].setAttribute('disabled', '');
-                }
+                if (allowed.includes(school)) { options[i].removeAttribute('disabled'); if (firstAvailable === -1) firstAvailable = i; }
+                else options[i].setAttribute('disabled', '');
             }
             if (!allowed.includes(currentSchool) && firstAvailable !== -1) S2.selectedIndex = firstAvailable;
             updateSchoolVisibility();
             updateDynamicOptionsRestrictions();
             updateTimeGroupAvailability();
+            updateBoostAvailability();
             calc();
         }
 
@@ -513,10 +564,7 @@
             const school = S2.options[S2.selectedIndex].getAttribute('data-school');
             document.querySelectorAll('.school-option-block').forEach(b => b.style.display = 'none');
             const blockId = schoolBlockMap[school];
-            if (blockId) {
-                const block = document.getElementById(blockId);
-                if (block) block.style.display = 'block';
-            }
+            if (blockId) { const block = document.getElementById(blockId); if (block) block.style.display = 'block'; }
             updatePreviewLabels(school);
         }
 
@@ -563,12 +611,9 @@
             const reactionParent = document.getElementById('mod-reaction');
             const delayedParent = document.getElementById('mod-delayed');
             if (anyChecked) {
-                if (!bonusCb.checked) bonusParent.classList.add('mod-disabled');
-                else bonusParent.classList.remove('mod-disabled');
-                if (!reactionCb.checked) reactionParent.classList.add('mod-disabled');
-                else reactionParent.classList.remove('mod-disabled');
-                if (!delayedCb.checked) delayedParent.classList.add('mod-disabled');
-                else delayedParent.classList.remove('mod-disabled');
+                if (!bonusCb.checked) bonusParent.classList.add('mod-disabled'); else bonusParent.classList.remove('mod-disabled');
+                if (!reactionCb.checked) reactionParent.classList.add('mod-disabled'); else reactionParent.classList.remove('mod-disabled');
+                if (!delayedCb.checked) delayedParent.classList.add('mod-disabled'); else delayedParent.classList.remove('mod-disabled');
             } else {
                 bonusParent.classList.remove('mod-disabled');
                 reactionParent.classList.remove('mod-disabled');
@@ -597,20 +642,18 @@
                 if (disableTime) {
                     item.classList.add('mod-disabled');
                     const cb = item.querySelector('input.time-mod');
-                    if (cb && cb.checked) {
-                        cb.checked = false;
-                        cb.dispatchEvent(new Event('change', { bubbles: true }));
-                    }
-                } else {
-                    item.classList.remove('mod-disabled');
-                }
+                    if (cb && cb.checked) { cb.checked = false; cb.dispatchEvent(new Event('change', { bubbles: true })); }
+                } else { item.classList.remove('mod-disabled'); }
             });
-            if (disableTime) {
-                updateTimeModifiers();
-            }
+            if (disableTime) updateTimeModifiers();
         }
 
         function calc() {
+            if (!S1.value) {
+                r1.textContent = '—'; r2.textContent = '—'; r3.textContent = '—'; rt.textContent = '—';
+                rs.textContent = '—'; rlv.textContent = '—';
+                return;
+            }
             const level = parseInt(L.value) || 1;
             const intMod = parseInt(I.value) || 0;
             const maxMana = level * 3 + level * intMod;
@@ -620,11 +663,9 @@
             const base = parseInt(S1.value);
             const schoolBase = parseInt(S2.value);
             const dynamicCost = parseInt(schoolSelectMap[S2.options[S2.selectedIndex].getAttribute('data-school')]?.value) || 0;
-            const boost = parseInt(S3.value);
+            const boost = S3.disabled ? 0 : parseInt(S3.value);
             let mods = 0, count = 0;
-            document.querySelectorAll('.mod-item input[type="checkbox"]').forEach(cb => {
-                if (cb.checked) { mods += parseInt(cb.value); count++; }
-            });
+            document.querySelectorAll('.mod-item input[type="checkbox"]').forEach(cb => { if (cb.checked) { mods += parseInt(cb.value); count++; } });
             const totalSchool = schoolBase + dynamicCost + boost;
             const total = base + totalSchool + mods;
             const baseSL = parseInt(S1.options[S1.selectedIndex].getAttribute('data-sl')) || 10;
@@ -642,7 +683,7 @@
             const school = S2.options[S2.selectedIndex].getAttribute('data-school');
             const select = schoolSelectMap[school];
             const opt = select?.options[select.selectedIndex];
-            const mult = parseFloat(S3.options[S3.selectedIndex].getAttribute('data-mult')) || 1;
+            const mult = S3.disabled ? 1 : parseFloat(S3.options[S3.selectedIndex].getAttribute('data-mult')) || 1;
             let mainText = '—', diceText = '—', durationOverride = null;
             if (school === 'evoc' && opt) {
                 mainText = opt.getAttribute('data-name')||'Огонь';
@@ -650,13 +691,17 @@
             } else if (school === 'heal' && opt) {
                 mainText = opt.getAttribute('data-name')||'1 цель';
                 diceText = multiplyDice(opt.getAttribute('data-heal-dice')||'1к8', mult);
+            } else if (school === 'abjur' && opt) {
+                mainText = opt.getAttribute('data-abjur-name')||'Ограждение';
+                const bonus = parseInt(opt.getAttribute('data-abjur-bonus')) || 2;
+                const scaledBonus = Math.floor(bonus * mult);
+                diceText = `+${scaledBonus} КД`;
             } else if (school === 'illus' && opt) {
                 mainText = opt.getAttribute('data-illus-name');
                 diceText = opt.getAttribute('data-illus-dur');
                 durationOverride = diceText;
             } else if (school === 'trans' && opt) { mainText = opt.getAttribute('data-trans-name'); diceText = opt.getAttribute('data-trans-weight'); }
             else if (school === 'necro' && opt) { mainText = opt.getAttribute('data-necro-name'); diceText = multiplyDice(opt.getAttribute('data-necro-dice')||'1к8', mult); }
-            else if (school === 'abjur' && opt) { mainText = opt.getAttribute('data-abjur-name'); diceText = opt.getAttribute('data-abjur-bonus'); }
             else if (school === 'ench' && opt) { mainText = opt.getAttribute('data-ench-name'); diceText = opt.getAttribute('data-ench-targets'); }
             else if (school === 'divin' && opt) { mainText = opt.getAttribute('data-divin-name'); diceText = opt.getAttribute('data-divin-range'); }
             else if (school === 'conju' && opt) { mainText = opt.getAttribute('data-conju-name'); diceText = opt.getAttribute('data-conju-cr'); }
@@ -684,14 +729,10 @@
 
             previewMain.textContent = mainText;
             previewDice.textContent = diceText;
-
-            // Определение длительности с учётом модов времени
             let duration = durationOverride || 'Мгновенно';
             const timeCb = document.querySelector('.time-mod:checked');
-            if (timeCb) {
-                const timeLabel = timeCb.parentElement.textContent.trim().split('(')[0].trim();
-                duration = timeLabel;
-            } else if (!durationOverride) {
+            if (timeCb) { duration = timeCb.parentElement.textContent.trim().split('(')[0].trim(); }
+            else if (!durationOverride) {
                 document.querySelectorAll('.mod-item input[type="checkbox"]').forEach(cb => {
                     if (cb.checked) {
                         const l = cb.parentElement.textContent.trim();
@@ -707,12 +748,8 @@
             activeModsDiv.textContent = activeMods.length ? activeMods.join(', ') : 'Нет';
 
             actionDisplay.textContent = actionType;
-            if (actionType === 'Отложенное') {
-                actionCondition.style.display = 'block';
-            } else {
-                actionCondition.style.display = 'none';
-                actionCondition.value = '';
-            }
+            if (actionType === 'Отложенное') { actionCondition.style.display = 'block'; }
+            else { actionCondition.style.display = 'none'; actionCondition.value = ''; }
         }
 
         function multiplyDice(diceStr, mult) {
@@ -729,45 +766,137 @@
         }
 
         function copyText() {
+            if (!S1.value) { showToast('Сначала выберите основу заклинания'); return; }
             calc();
             const name = spellName.value.trim() || 'Без названия';
             const desc = spellDesc.value.trim() || 'Описание не указано';
             const mods = activeModsDiv.textContent === 'Нет' ? 'Нет' : activeModsDiv.textContent;
             const action = actionDisplay.textContent;
             const condition = action === 'Отложенное' ? actionCondition.value.trim() : '';
-            const text = `🎴 Заклинание: ${name}\n📝 Описание: ${desc}\n⚡ Действие: ${action}${condition ? ' ('+condition+')' : ''}\n⚡ Мана: ${rt.textContent} | СЛ: ${rs.textContent}\n🔥 Тип/Эффект: ${previewMain.textContent}\n🦴 Кости/Параметр: ${previewDice.textContent}\n⏱ Длительность: ${previewDuration.textContent}\n🧩 Компоненты: ${previewComponents.textContent}\n🔧 Модификаторы: ${mods}\nСоздано в Калькуляторе Маны v5.1`;
-
-            if (navigator.clipboard && navigator.clipboard.writeText) {
+            const text = `🎴 Заклинание: ${name}\n📝 Описание: ${desc}\n⚡ Действие: ${action}${condition ? ' ('+condition+')' : ''}\n⚡ Мана: ${rt.textContent} | СЛ: ${rs.textContent}\n🔥 Тип/Эффект: ${previewMain.textContent}\n🦴 Кости/Параметр: ${previewDice.textContent}\n⏱ Длительность: ${previewDuration.textContent}\n🧩 Компоненты: ${previewComponents.textContent}\n🔧 Модификаторы: ${mods}\nСоздано в Калькуляторе Маны v5.2`;
+            if (navigator.clipboard?.writeText) {
                 navigator.clipboard.writeText(text).then(() => showToast('✅ Заклинание скопировано!')).catch(() => fallbackCopy(text));
             } else fallbackCopy(text);
         }
 
         function fallbackCopy(text) {
-            const ta = document.createElement('textarea');
-            ta.value = text;
-            ta.style.position = 'fixed'; ta.style.top = '0'; ta.style.left = '0';
-            ta.style.width = '1px'; ta.style.height = '1px'; ta.style.opacity = '0'; ta.style.pointerEvents = 'none';
-            document.body.appendChild(ta);
-            ta.focus(); ta.select();
+            const ta = document.createElement('textarea'); ta.value = text; ta.style.position='fixed'; ta.style.top='0'; ta.style.left='0';
+            ta.style.width='1px'; ta.style.height='1px'; ta.style.opacity='0'; ta.style.pointerEvents='none';
+            document.body.appendChild(ta); ta.focus(); ta.select();
             try { document.execCommand('copy'); showToast('✅ Скопировано!'); } catch (e) { showToast('Скопируйте вручную'); }
             document.body.removeChild(ta);
         }
 
         function showToast(msg) {
-            const t = document.getElementById('toast'); t.textContent = msg;
-            t.style.display = 'block'; t.style.opacity = '1';
+            const t = document.getElementById('toast'); t.textContent = msg; t.style.display = 'block'; t.style.opacity = '1';
             clearTimeout(t._timeout);
             t._timeout = setTimeout(() => { t.style.opacity = '0'; setTimeout(() => { t.style.display = 'none'; }, 300); }, 2000);
         }
 
+        // Сохранение и группы
+        function renderSavedSpells() {
+            savedList.innerHTML = '';
+            const groups = spellsData.groups;
+            const groupNames = Object.keys(groups);
+            if (groupNames.length === 0) {
+                savedList.textContent = 'Нет сохранённых заклинаний';
+                return;
+            }
+            groupNames.forEach(group => {
+                const spells = groups[group];
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'saved-group';
+                groupDiv.innerHTML = `<h4>${group}</h4>`;
+                spells.forEach((spell, index) => {
+                    const spellDiv = document.createElement('div');
+                    spellDiv.className = 'saved-spell-item';
+                    spellDiv.innerHTML = `
+                        <div class="saved-spell-info">
+                            <strong>${spell.name}</strong> — Мана: ${spell.mana}, СЛ: ${spell.sl}<br>
+                            <small>${spell.type} | ${spell.dice} | ${spell.duration}</small>
+                        </div>
+                        <div class="saved-spell-actions">
+                            <button class="load-spell" data-group="${group}" data-index="${index}">Загрузить</button>
+                            <button class="delete-spell" data-group="${group}" data-index="${index}">Удалить</button>
+                        </div>`;
+                    groupDiv.appendChild(spellDiv);
+                });
+                savedList.appendChild(groupDiv);
+            });
+            document.querySelectorAll('.load-spell').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const group = e.target.dataset.group;
+                    const index = parseInt(e.target.dataset.index);
+                    loadSpell(group, index);
+                });
+            });
+            document.querySelectorAll('.delete-spell').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const group = e.target.dataset.group;
+                    const index = parseInt(e.target.dataset.index);
+                    deleteSpell(group, index);
+                });
+            });
+        }
+
+        function updateGroupSelect() {
+            const groups = Object.keys(spellsData.groups);
+            groupSelect.innerHTML = '<option value="">-- Новая группа --</option>';
+            groups.forEach(g => { const opt = document.createElement('option'); opt.value = g; opt.textContent = g; groupSelect.appendChild(opt); });
+        }
+
+        function saveCurrentSpell() {
+            if (!S1.value) { showToast('Выберите основу заклинания'); return; }
+            calc();
+            const name = spellName.value.trim() || 'Без названия';
+            const desc = spellDesc.value.trim();
+            const spell = {
+                name, desc,
+                mana: rt.textContent, sl: rs.textContent,
+                type: previewMain.textContent, dice: previewDice.textContent,
+                duration: previewDuration.textContent, components: previewComponents.textContent,
+                modifiers: activeModsDiv.textContent, action: actionDisplay.textContent,
+                condition: actionCondition.value.trim()
+            };
+            let group = newGroupInput.value.trim();
+            if (!group) group = groupSelect.value;
+            if (!group) group = 'Общее';
+            if (!spellsData.groups[group]) spellsData.groups[group] = [];
+            spellsData.groups[group].push(spell);
+            saveSpellsData();
+            updateGroupSelect();
+            renderSavedSpells();
+            showToast('✅ Заклинание сохранено!');
+        }
+
+        function loadSpell(group, index) {
+            const spell = spellsData.groups[group][index];
+            if (!spell) return;
+            spellName.value = spell.name;
+            spellDesc.value = spell.desc || '';
+            showToast('📥 Заклинание загружено (настройте параметры вручную)');
+        }
+
+        function deleteSpell(group, index) {
+            spellsData.groups[group].splice(index, 1);
+            if (spellsData.groups[group].length === 0) delete spellsData.groups[group];
+            saveSpellsData();
+            updateGroupSelect();
+            renderSavedSpells();
+            showToast('🗑 Заклинание удалено');
+        }
+
+        saveBtn.addEventListener('click', saveCurrentSpell);
+
+        // Обработчики событий
         L.addEventListener('input', () => { updateBaseAvailability(); calc(); });
         L.addEventListener('blur', () => { updateBaseAvailability(); calc(); });
         I.addEventListener('input', calc);
         I.addEventListener('blur', calc);
-        S1.addEventListener('change', () => { updateSchoolAvailability(); calc(); });
-        S2.addEventListener('change', () => { updateSchoolVisibility(); updateTimeGroupAvailability(); calc(); });
+        S1.addEventListener('change', () => { if (S1.value) { updateSchoolAvailability(); } else { calc(); } });
+        S2.addEventListener('change', () => { updateSchoolVisibility(); updateTimeGroupAvailability(); updateBoostAvailability(); calc(); });
         S3.addEventListener('change', calc);
-        document.querySelectorAll('.school-option-block select').forEach(sel => sel.addEventListener('change', calc));
+        document.querySelectorAll('.school-option-block select').forEach(sel => sel.addEventListener('change', () => { updateBoostAvailability(); calc(); }));
         spellName.addEventListener('input', calc);
         spellDesc.addEventListener('input', calc);
         actionCondition.addEventListener('input', calc);
@@ -796,8 +925,13 @@
 
         copyBtn.addEventListener('click', copyText);
 
+        // Инициализация
+        L.value = 1; I.value = 0;
         updateBaseAvailability();
-        updateSchoolAvailability();
+        updateBoostAvailability();
+        updateGroupSelect();
+        renderSavedSpells();
+        calc();
     })();
 </script>
 </body>
