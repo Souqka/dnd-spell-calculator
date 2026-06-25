@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Калькулятор Маны v5.4 — D&D 5e</title>
     <style>
-        /* ... стили без изменений, добавлен только .saved-spell-card .ss-desc */
         :root {
             --bg: #0a0a14; --panel: #12122a; --accent: #7b2ff7; --accent2: #c084fc;
             --gold: #f0c060; --text: #e0e0e0; --text2: #9090a0; --danger: #f87171;
@@ -68,7 +67,6 @@
         .footer { text-align:center; color:#3a3a50; font-size:0.6em; padding:12px; margin-top:6px; }
         .school-options-label { font-size:0.7em; color:#9090a0; display:block; margin-bottom:4px; }
         .mods-list { color:var(--gold); font-size:0.8em; line-height:1.5; margin-top:4px; word-break:break-word; }
-
         .saved-group { margin-bottom:16px; }
         .saved-group h4 { color:var(--accent2); margin:8px 0 6px; font-size:0.9em; padding:6px 10px; background:var(--card); border-radius:8px; border-left:3px solid var(--accent); }
         .saved-spell-card { background: linear-gradient(135deg, #1e1e40, #181835); border:1px solid var(--border); border-radius:12px; padding:12px; margin-bottom:8px; box-shadow:0 2px 8px rgba(0,0,0,0.3); }
@@ -157,10 +155,97 @@
                     <option value="5" data-dice="4к6" data-name="Яд" data-min-level="17">Яд (4к6) — +5</option>
                 </select>
             </div>
-            <!-- Остальные школы (идентичны предыдущей версии, но для читаемости оставлены) -->
-            <div id="healOptions" class="school-option-block" style="display:none;"><label class="school-options-label">💚 Форма лечения</label><select id="healForm"><option value="0" data-heal-dice="1к8" data-name="1 цель" data-min-level="1">1 цель — 1к8 — +0</option><option value="2" data-heal-dice="2к8" data-name="Группа (3)" data-min-level="2">Группа (3) — 2к8 — +2</option><option value="4" data-heal-dice="3к8" data-name="Массовое (6)" data-min-level="4">Массовое (6) — 3к8 — +4</option><option value="7" data-heal-dice="4к8" data-name="Аура (все)" data-min-level="6">Аура (все) — 4к8 — +7</option><option value="10" data-heal-dice="6к8" data-name="Воскрешение" data-min-level="17">Воскрешение/Регенерация — 6к8 — +10</option></select></div>
-            <div id="abjurOptions" class="school-option-block" style="display:none;"><label class="school-options-label">🛡 Тип защиты</label><select id="abjurationForm"><option value="0" data-abjur-bonus="2" data-abjur-name="Личный щит" data-min-level="1">Личный щит +2 КД — +0</option><option value="1" data-abjur-bonus="2" data-abjur-name="Левитирующий щит" data-min-level="2">Левитирующий щит +2 КД (авто) — +1</option><option value="2" data-abjur-bonus="2" data-abjur-name="Щит на союзника" data-min-level="4">Щит на союзника +2 КД (1 цель) — +2</option><option value="3" data-abjur-bonus="2" data-abjur-name="Массовый щит" data-min-level="6">Массовый щит +2 КД (группа) — +3</option><option value="5" data-abjur-bonus="2" data-abjur-name="Непроницаемый барьер" data-min-level="17">Непроницаемый барьер +2 КД — +5</option></select></div>
-            <!-- остальные блоки опущены для краткости, но в полном коде они присутствуют -->
+            <!-- Иллюзия -->
+            <div id="illusOptions" class="school-option-block" style="display:none;">
+                <label class="school-options-label">🎭 Длительность иллюзии</label>
+                <select id="illusionForm">
+                    <option value="0" data-illus-name="Мгновенная вспышка" data-illus-dur="Мгновенно" data-min-level="2">Мгновенная вспышка — +0</option>
+                    <option value="1" data-illus-name="Кратковременная" data-illus-dur="1 раунд" data-min-level="2">Кратковременная (1 раунд) — +1</option>
+                    <option value="2" data-illus-name="Средняя" data-illus-dur="1 минута" data-min-level="4">Средняя (1 минута) — +2</option>
+                    <option value="3" data-illus-name="Длительная" data-illus-dur="10 минут" data-min-level="6">Длительная (10 минут) — +3</option>
+                    <option value="4" data-illus-name="Постоянная" data-illus-dur="1 час" data-min-level="8">Постоянная (1 час) — +4</option>
+                    <option value="6" data-illus-name="До развеивания" data-illus-dur="Пока не развеют" data-min-level="17">До развеивания — +6</option>
+                </select>
+            </div>
+            <!-- Трансмутация -->
+            <div id="transOptions" class="school-option-block" style="display:none;">
+                <label class="school-options-label">🔧 Размер/вес предмета</label>
+                <select id="transmutationForm">
+                    <option value="0" data-trans-name="Микроскопический" data-trans-weight="до 100 г" data-min-level="4">Микроскопический (до 100 г) — +0</option>
+                    <option value="1" data-trans-name="Маленький" data-trans-weight="до 5 кг" data-min-level="4">Маленький (до 5 кг) — +1</option>
+                    <option value="2" data-trans-name="Средний" data-trans-weight="до 25 кг" data-min-level="6">Средний (до 25 кг) — +2</option>
+                    <option value="3" data-trans-name="Большой" data-trans-weight="до 100 кг" data-min-level="8">Большой (до 100 кг) — +3</option>
+                    <option value="5" data-trans-name="Огромный" data-trans-weight="до 500 кг" data-min-level="12">Огромный (до 500 кг) — +5</option>
+                    <option value="7" data-trans-name="Колоссальный" data-trans-weight="до 2 тонн" data-min-level="17">Колоссальный (до 2 тонн) — +7</option>
+                </select>
+            </div>
+            <!-- Некромантия -->
+            <div id="necroOptions" class="school-option-block" style="display:none;">
+                <label class="school-options-label">💀 Тип некромантии</label>
+                <select id="necromancyForm">
+                    <option value="0" data-necro-name="Касание смерти" data-necro-dice="1к8" data-min-level="6">Касание смерти (1к8) — +0</option>
+                    <option value="1" data-necro-name="Слабое проклятие" data-necro-dice="1к4" data-min-level="6">Слабое проклятие (1к4) — +1</option>
+                    <option value="3" data-necro-name="Поднятие зомби/скелета" data-necro-dice="2к6" data-min-level="8">Поднятие зомби/скелета (2к6) — +3</option>
+                    <option value="5" data-necro-name="Средняя нежить" data-necro-dice="3к6" data-min-level="12">Средняя нежить (гуль, 2-3 зомби) (3к6) — +5</option>
+                    <option value="7" data-necro-name="Сильная нежить" data-necro-dice="4к8" data-min-level="17">Сильная нежить (призрак, 4-6 зомби) (4к8) — +7</option>
+                    <option value="10" data-necro-name="Армия нежити" data-necro-dice="6к8" data-min-level="17">Армия нежити (6к8) — +10</option>
+                </select>
+            </div>
+            <!-- Ограждение -->
+            <div id="abjurOptions" class="school-option-block" style="display:none;">
+                <label class="school-options-label">🛡 Тип защиты</label>
+                <select id="abjurationForm">
+                    <option value="0" data-abjur-bonus="2" data-abjur-name="Личный щит" data-min-level="1">Личный щит +2 КД — +0</option>
+                    <option value="1" data-abjur-bonus="2" data-abjur-name="Левитирующий щит" data-min-level="2">Левитирующий щит +2 КД (авто) — +1</option>
+                    <option value="2" data-abjur-bonus="2" data-abjur-name="Щит на союзника" data-min-level="4">Щит на союзника +2 КД (1 цель) — +2</option>
+                    <option value="3" data-abjur-bonus="2" data-abjur-name="Массовый щит" data-min-level="6">Массовый щит +2 КД (группа) — +3</option>
+                    <option value="5" data-abjur-bonus="2" data-abjur-name="Непроницаемый барьер" data-min-level="17">Непроницаемый барьер +2 КД — +5</option>
+                </select>
+            </div>
+            <!-- Очарование -->
+            <div id="enchOptions" class="school-option-block" style="display:none;">
+                <label class="school-options-label">🧠 Тип контроля</label>
+                <select id="enchantmentForm">
+                    <option value="0" data-ench-name="Базовое влияние" data-ench-targets="1 цель" data-min-level="4">Базовое влияние (1 цель) — +0</option>
+                    <option value="2" data-ench-name="Массовое очарование" data-ench-targets="3 цели" data-min-level="4">Массовое очарование (3 цели) — +2</option>
+                    <option value="4" data-ench-name="Глубокий контроль" data-ench-targets="1 цель (доминирование)" data-min-level="6">Глубокий контроль (доминирование) — +4</option>
+                    <option value="6" data-ench-name="Полное подчинение" data-ench-targets="1 цель (полное)" data-min-level="8">Полное подчинение — +6</option>
+                    <option value="8" data-ench-name="Изменение памяти" data-ench-targets="1 цель (память)" data-min-level="17">Изменение памяти — +8</option>
+                </select>
+            </div>
+            <!-- Прорицание -->
+            <div id="divinOptions" class="school-option-block" style="display:none;">
+                <label class="school-options-label">🔮 Тип прорицания</label>
+                <select id="divinationForm">
+                    <option value="0" data-divin-name="Базовое предсказание" data-divin-range="Ближняя" data-min-level="2">Базовое предсказание — +0</option>
+                    <option value="1" data-divin-name="Обнаружение существ" data-divin-range="Средняя" data-min-level="2">Обнаружение существ/предметов — +1</option>
+                    <option value="3" data-divin-name="Видение прошлого" data-divin-range="Дальняя" data-min-level="4">Видение прошлого/будущего — +3</option>
+                    <option value="5" data-divin-name="Истинное зрение" data-divin-range="Средняя" data-min-level="6">Истинное зрение — +5</option>
+                    <option value="7" data-divin-name="Контакт с высшими силами" data-divin-range="Неограниченная" data-min-level="17">Контакт с высшими силами — +7</option>
+                </select>
+            </div>
+            <!-- Призыв -->
+            <div id="conjuOptions" class="school-option-block" style="display:none;">
+                <label class="school-options-label">🌀 Тип призыва</label>
+                <select id="conjurationForm">
+                    <option value="0" data-conju-name="Мелкое существо" data-conju-cr="CR 0-1/4" data-min-level="4">Мелкое существо (CR 0-1/4) — +0</option>
+                    <option value="2" data-conju-name="Среднее существо" data-conju-cr="CR 1/2-1" data-min-level="4">Среднее существо (CR 1/2-1) — +2</option>
+                    <option value="4" data-conju-name="Сильное существо" data-conju-cr="CR 2-4" data-min-level="6">Сильное существо (CR 2-4) — +4</option>
+                    <option value="6" data-conju-name="Стая существ" data-conju-cr="CR 1/4 (стая)" data-min-level="8">Стая существ — +6</option>
+                    <option value="9" data-conju-name="Элементаль/демон" data-conju-cr="CR 5+" data-min-level="17">Элементаль/демон (CR 5+) — +9</option>
+                </select>
+            </div>
+            <!-- Универсальная -->
+            <div id="uniOptions" class="school-option-block" style="display:none;">
+                <label class="school-options-label">🌟 Тип эффекта</label>
+                <select id="universalForm">
+                    <option value="0" data-uni-name="Базовый аркан" data-uni-scope="Одиночный" data-min-level="2">Базовый аркан — +0</option>
+                    <option value="2" data-uni-name="Комбинированный" data-uni-scope="Двойной" data-min-level="2">Комбинированный эффект — +2</option>
+                    <option value="4" data-uni-name="Сложный ритуал" data-uni-scope="Область" data-min-level="4">Сложный ритуал — +4</option>
+                    <option value="6" data-uni-name="Могущественный аркан" data-uni-scope="Большая область" data-min-level="6">Могущественный аркан — +6</option>
+                    <option value="10" data-uni-name="Изменение реальности" data-uni-scope="Безграничный" data-min-level="17">Изменение реальности — +10</option>
+                </select>
+            </div>
         </div>
     </div>
 
@@ -293,9 +378,6 @@
 
 <script>
     (function() {
-        // Все переменные и вспомогательные функции идентичны предыдущей версии, кроме изменений ниже
-        // ... (полный код скрипта, идентичный v5.3, за исключением изменений в renderSavedSpells и добавленной copySavedSpell)
-
         const L = document.getElementById('L');
         const I = document.getElementById('I');
         const spellMod = document.getElementById('spellMod');
@@ -308,7 +390,14 @@
         const boostWarning = document.getElementById('boostWarning');
         const damageType = document.getElementById('damageType');
         const healForm = document.getElementById('healForm');
+        const illusionForm = document.getElementById('illusionForm');
+        const transmutationForm = document.getElementById('transmutationForm');
+        const necromancyForm = document.getElementById('necromancyForm');
         const abjurationForm = document.getElementById('abjurationForm');
+        const enchantmentForm = document.getElementById('enchantmentForm');
+        const divinationForm = document.getElementById('divinationForm');
+        const conjurationForm = document.getElementById('conjurationForm');
+        const universalForm = document.getElementById('universalForm');
         const spellName = document.getElementById('spellName');
         const spellDesc = document.getElementById('spellDesc');
         const actionDisplay = document.getElementById('actionDisplay');
@@ -328,11 +417,10 @@
         const savedList = document.getElementById('savedSpellsList');
 
         const schoolSelectMap = {
-            'evoc': damageType, 'heal': healForm, 'illus': document.getElementById('illusionForm'),
-            'trans': document.getElementById('transmutationForm'), 'necro': document.getElementById('necromancyForm'),
-            'abjur': abjurationForm, 'ench': document.getElementById('enchantmentForm'),
-            'divin': document.getElementById('divinationForm'), 'conju': document.getElementById('conjurationForm'),
-            'uni': document.getElementById('universalForm')
+            'evoc': damageType, 'heal': healForm, 'illus': illusionForm,
+            'trans': transmutationForm, 'necro': necromancyForm, 'abjur': abjurationForm,
+            'ench': enchantmentForm, 'divin': divinationForm, 'conju': conjurationForm,
+            'uni': universalForm
         };
         const schoolBlockMap = {
             'evoc': 'evocOptions', 'heal': 'healOptions', 'illus': 'illusOptions', 'trans': 'transOptions',
