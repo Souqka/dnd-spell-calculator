@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Калькулятор Маны v5.0 — D&D 5e</title>
+    <title>Калькулятор Маны v5.1 — D&D 5e</title>
     <style>
         :root {
             --bg: #0a0a14; --panel: #12122a; --accent: #7b2ff7; --accent2: #c084fc;
@@ -11,150 +11,127 @@
             --success: #4ade80; --border: #252545; --card: #181835; --radius: 14px;
             --safe-bottom: env(safe-area-inset-bottom, 10px);
         }
-        * {
-            margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent;
-        }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
         body {
             background: var(--bg); color: var(--text);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh; padding: 12px 12px var(--safe-bottom);
-            font-size: 16px; -webkit-text-size-adjust: 100%; -webkit-font-smoothing: antialiased;
-            user-select: none;
+            font-size: 16px; -webkit-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; user-select: none;
         }
         .container { max-width: 520px; margin: 0 auto; }
         .header {
-            text-align: center; padding: 18px; background: var(--panel);
-            border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 10px;
+            text-align:center; padding:18px; background:var(--panel); border-radius:var(--radius);
+            border:1px solid var(--border); margin-bottom:10px;
         }
-        .header h1 { font-size: 1.4em; color: var(--accent2); letter-spacing: 0.5px; }
-        .header .sub { color: var(--text2); font-size: 0.7em; margin-top: 4px; }
+        .header h1 { font-size:1.4em; color:var(--accent2); letter-spacing:0.5px; }
+        .header .sub { color:var(--text2); font-size:0.7em; margin-top:4px; }
         .panel {
-            background: var(--panel); border-radius: var(--radius);
-            border: 1px solid var(--border); padding: 14px 16px; margin-bottom: 10px;
+            background:var(--panel); border-radius:var(--radius); border:1px solid var(--border);
+            padding:14px 16px; margin-bottom:10px;
         }
-        .panel h2 { font-size: 0.95em; color: var(--accent2); margin-bottom: 10px; }
-        .step { font-size: 0.65em; color: var(--accent); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
-        .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-        .row4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; }
-        .row5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 8px; }
+        .panel h2 { font-size:0.95em; color:var(--accent2); margin-bottom:10px; }
+        .step { font-size:0.65em; color:var(--accent); font-weight:700; text-transform:uppercase; margin-bottom:4px; }
+        .row2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+        .row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+        .row4 { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:8px; }
+        .row5 { display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; margin-top:8px; }
         .scard {
-            background: var(--card); border-radius: 10px; padding: 10px 6px;
-            text-align: center; border: 1px solid var(--border);
+            background:var(--card); border-radius:10px; padding:10px 6px;
+            text-align:center; border:1px solid var(--border);
         }
-        .scard .l { font-size: 0.6em; color: var(--text2); text-transform: uppercase; }
-        .scard .v { font-size: 1.3em; font-weight: bold; color: var(--gold); }
+        .scard .l { font-size:0.6em; color:var(--text2); text-transform:uppercase; }
+        .scard .v { font-size:1.3em; font-weight:bold; color:var(--gold); }
         .scard input {
-            width: 100%; text-align: center; font-size: 1.2em; font-weight: bold;
-            background: #0a0a18; border: 1px solid var(--border); color: var(--gold);
-            border-radius: 8px; padding: 10px 4px; -webkit-appearance: none;
-            caret-color: var(--accent);
+            width:100%; text-align:center; font-size:1.2em; font-weight:bold;
+            background:#0a0a18; border:1px solid var(--border); color:var(--gold);
+            border-radius:8px; padding:10px 4px; -webkit-appearance:none; caret-color:var(--accent);
         }
-        .scard input:focus { border-color: var(--accent); outline: none; }
+        .scard input:focus { border-color:var(--accent); outline:none; }
         select {
-            width: 100%; padding: 12px 14px; background: #0a0a18; color: var(--text);
-            border: 1px solid var(--border); border-radius: 10px; font-size: 0.9em;
-            -webkit-appearance: none; appearance: none; margin-top: 6px;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath d='M7 10L1 4h12z' fill='%23c084fc'/%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 12px center;
-            background-color: #0a0a18; cursor: pointer;
+            width:100%; padding:12px 14px; background:#0a0a18; color:var(--text);
+            border:1px solid var(--border); border-radius:10px; font-size:0.9em;
+            -webkit-appearance:none; appearance:none; margin-top:6px;
+            background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath d='M7 10L1 4h12z' fill='%23c084fc'/%3E%3C/svg%3E");
+            background-repeat:no-repeat; background-position:right 12px center;
+            background-color:#0a0a18; cursor:pointer;
         }
-        select:focus { border-color: var(--accent); outline: none; }
+        select:focus { border-color:var(--accent); outline:none; }
         .mod-item {
-            display: flex; align-items: center; gap: 10px; background: var(--card);
-            padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border);
-            margin-bottom: 6px; font-size: 0.85em; cursor: pointer;
-            transition: background 0.15s;
+            display:flex; align-items:center; gap:10px; background:var(--card);
+            padding:12px 14px; border-radius:10px; border:1px solid var(--border);
+            margin-bottom:6px; font-size:0.85em; cursor:pointer; transition:background 0.15s;
         }
-        .mod-item:active { background: #202045; }
-        .mod-item input[type="checkbox"] {
-            width: 22px; height: 22px; accent-color: var(--accent); flex-shrink: 0;
-        }
-        .mod-cost {
-            margin-left: auto; background: #2a2a40; padding: 4px 10px;
-            border-radius: 12px; font-size: 0.8em; font-weight: bold; color: var(--gold);
-        }
-        .mod-item.mod-disabled {
-            opacity: 0.4; pointer-events: none;
-        }
+        .mod-item:active { background:#202045; }
+        .mod-item input[type="checkbox"] { width:22px; height:22px; accent-color:var(--accent); flex-shrink:0; }
+        .mod-cost { margin-left:auto; background:#2a2a40; padding:4px 10px; border-radius:12px; font-size:0.8em; font-weight:bold; color:var(--gold); }
+        .mod-item.mod-disabled { opacity:0.4; pointer-events:none; }
         .group-header {
-            color: var(--accent2); font-size: 0.75em; font-weight: 600;
-            margin: 14px 0 6px; text-transform: uppercase;
+            color:var(--accent2); font-size:0.75em; font-weight:600; margin:14px 0 6px; text-transform:uppercase;
         }
         .btn {
-            display: block; width: 100%; padding: 14px; border-radius: 12px;
-            cursor: pointer; font-size: 0.95em; font-weight: 600; text-align: center;
-            border: 2px solid var(--border); color: var(--text); background: var(--card);
-            -webkit-appearance: none; margin-bottom: 8px; transition: all 0.2s;
+            display:block; width:100%; padding:14px; border-radius:12px; cursor:pointer; font-size:0.95em;
+            font-weight:600; text-align:center; border:2px solid var(--border); color:var(--text);
+            background:var(--card); -webkit-appearance:none; margin-bottom:8px; transition:all 0.2s;
         }
-        .btn:active { transform: scale(0.98); opacity: 0.8; }
-        .btn.blu { border-color: #60a5fa; color: #60a5fa; font-size: 1em; padding: 16px; }
+        .btn:active { transform:scale(0.98); opacity:0.8; }
+        .btn.blu { border-color:#60a5fa; color:#60a5fa; font-size:1em; padding:16px; }
         .rscard {
-            background: var(--card); border-radius: 10px; padding: 12px 6px;
-            text-align: center; border: 1px solid var(--border);
+            background:var(--card); border-radius:10px; padding:12px 6px; text-align:center; border:1px solid var(--border);
         }
-        .rscard.big { border-color: var(--accent); background: #1f1635; }
-        .rscard .rl { font-size: 0.6em; color: var(--text2); text-transform: uppercase; }
-        .rscard .rv { font-size: 1.4em; font-weight: bold; color: var(--gold); }
+        .rscard.big { border-color:var(--accent); background:#1f1635; }
+        .rscard .rl { font-size:0.6em; color:var(--text2); text-transform:uppercase; }
+        .rscard .rv { font-size:1.4em; font-weight:bold; color:var(--gold); }
         .preview-panel {
-            background: #0a0a14; border-radius: var(--radius); border: 2px solid var(--accent);
-            padding: 16px; margin-top: 8px;
+            background:#0a0a14; border-radius:var(--radius); border:2px solid var(--accent); padding:16px; margin-top:8px;
         }
-        .preview-panel h3 { text-align: center; color: var(--gold); font-size: 1.1em; }
-        .preview-panel .psub { text-align: center; color: var(--text2); font-size: 0.7em; margin-bottom: 12px; }
-        .preview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
-        .preview-item {
-            background: var(--card); border-radius: 8px; padding: 10px;
-            text-align: center; border: 1px solid var(--border);
-        }
-        .preview-item .pl { font-size: 0.6em; color: var(--text2); text-transform: uppercase; }
-        .preview-item .pv { font-size: 0.9em; font-weight: bold; color: var(--gold); word-break: break-word; }
+        .preview-panel h3 { text-align:center; color:var(--gold); font-size:1.1em; }
+        .preview-panel .psub { text-align:center; color:var(--text2); font-size:0.7em; margin-bottom:12px; }
+        .preview-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px; }
+        .preview-item { background:var(--card); border-radius:8px; padding:10px; text-align:center; border:1px solid var(--border); }
+        .preview-item .pl { font-size:0.6em; color:var(--text2); text-transform:uppercase; }
+        .preview-item .pv { font-size:0.9em; font-weight:bold; color:var(--gold); word-break:break-word; }
         .comp-block {
-            background: var(--card); border-radius: 8px; padding: 10px;
-            text-align: center; border: 1px solid var(--border); margin-top: 8px;
-            font-size: 0.85em; color: #b0b0c0;
+            background:var(--card); border-radius:8px; padding:10px; text-align:center; border:1px solid var(--border);
+            margin-top:8px; font-size:0.85em; color:#b0b0c0;
         }
         .spell-name-input {
-            width: 100%; padding: 12px 14px; background: #0a0a18; color: var(--gold);
-            border: 1px solid var(--border); border-radius: 10px; font-size: 1em; font-weight: 600;
-            text-align: center; -webkit-appearance: none; caret-color: var(--accent); margin-bottom: 8px;
+            width:100%; padding:12px 14px; background:#0a0a18; color:var(--gold); border:1px solid var(--border);
+            border-radius:10px; font-size:1em; font-weight:600; text-align:center; -webkit-appearance:none;
+            caret-color:var(--accent); margin-bottom:8px;
         }
-        .spell-name-input:focus { border-color: var(--accent); outline: none; }
+        .spell-name-input:focus { border-color:var(--accent); outline:none; }
         .spell-desc-input {
-            width: 100%; padding: 10px 14px; background: #0a0a18; color: var(--text);
-            border: 1px solid var(--border); border-radius: 10px; font-size: 0.85em;
-            -webkit-appearance: none; caret-color: var(--accent); resize: vertical;
-            min-height: 60px; font-family: inherit; margin-bottom: 8px;
+            width:100%; padding:10px 14px; background:#0a0a18; color:var(--text); border:1px solid var(--border);
+            border-radius:10px; font-size:0.85em; -webkit-appearance:none; caret-color:var(--accent);
+            resize:vertical; min-height:60px; font-family:inherit; margin-bottom:8px;
         }
-        .spell-desc-input:focus { border-color: var(--accent); outline: none; }
+        .spell-desc-input:focus { border-color:var(--accent); outline:none; }
         .action-condition-input {
-            width: 100%; padding: 8px 12px; background: #0a0a18; color: var(--gold);
-            border: 1px solid var(--border); border-radius: 8px; font-size: 0.8em;
-            text-align: center; -webkit-appearance: none; caret-color: var(--accent);
-            margin-top: 6px; display: none;
+            width:100%; padding:8px 12px; background:#0a0a18; color:var(--gold); border:1px solid var(--border);
+            border-radius:8px; font-size:0.8em; text-align:center; -webkit-appearance:none; caret-color:var(--accent);
+            margin-top:6px; display:none;
         }
-        .action-condition-input:focus { border-color: var(--accent); outline: none; }
+        .action-condition-input:focus { border-color:var(--accent); outline:none; }
         .toast {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            background: #1f1635; color: var(--gold); padding: 14px 24px;
-            border-radius: 24px; border: 1px solid var(--accent); font-size: 0.9em;
-            font-weight: 600; z-index: 9999; display: none; text-align: center; max-width: 90%;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.5); backdrop-filter: blur(10px);
+            position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:#1f1635; color:var(--gold);
+            padding:14px 24px; border-radius:24px; border:1px solid var(--accent); font-size:0.9em; font-weight:600;
+            z-index:9999; display:none; text-align:center; max-width:90%; box-shadow:0 8px 20px rgba(0,0,0,0.5);
+            backdrop-filter:blur(10px);
         }
-        .footer { text-align: center; color: #3a3a50; font-size: 0.6em; padding: 12px; margin-top: 6px; }
-        .school-options-label { font-size: 0.7em; color: #9090a0; display: block; margin-bottom: 4px; }
-        .mods-list { color: var(--gold); font-size: 0.8em; line-height: 1.5; margin-top: 4px; word-break: break-word; }
+        .footer { text-align:center; color:#3a3a50; font-size:0.6em; padding:12px; margin-top:6px; }
+        .school-options-label { font-size:0.7em; color:#9090a0; display:block; margin-bottom:4px; }
+        .mods-list { color:var(--gold); font-size:0.8em; line-height:1.5; margin-top:4px; word-break:break-word; }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
         <h1>✨ Калькулятор Маны ✨</h1>
-        <div class="sub">Магия Свободной Воли для D&D 5e<br>v5.0 · Стабильная iOS</div>
+        <div class="sub">Магия Свободной Воли для D&D 5e<br>v5.1 • Группы модов • Время действия</div>
     </div>
 
     <!-- Характеристики -->
-    <div class="panel" id="charPanel">
+    <div class="panel">
         <div class="step">Персонаж</div>
         <h2>🧙 Характеристики</h2>
         <div class="row4">
@@ -172,7 +149,7 @@
     </div>
 
     <!-- Основа заклинания -->
-    <div class="panel" id="step1Panel">
+    <div class="panel">
         <div class="step">Шаг 1</div>
         <h2>🔮 Основа заклинания</h2>
         <select id="S1">
@@ -188,7 +165,7 @@
     </div>
 
     <!-- Школа магии -->
-    <div class="panel" id="step2Panel">
+    <div class="panel">
         <div class="step">Шаг 2</div>
         <h2>📚 Школа магии</h2>
         <select id="S2">
@@ -220,7 +197,7 @@
                     <option value="5" data-dice="4к6" data-name="Яд" data-min-level="17">Яд (4к6) — +5</option>
                 </select>
             </div>
-            <!-- Остальные школы (сокращены для читаемости, идентичны предыдущей версии) -->
+            <!-- Остальные школы (сокращены, но полные) -->
             <div id="healOptions" class="school-option-block" style="display:none;">
                 <label class="school-options-label">💚 Форма лечения</label>
                 <select id="healForm">
@@ -319,7 +296,7 @@
     </div>
 
     <!-- Усиление -->
-    <div class="panel" id="step3Panel">
+    <div class="panel">
         <div class="step">Шаг 3</div>
         <h2>⚡ Усиление заклинания</h2>
         <select id="S3">
@@ -332,13 +309,18 @@
     </div>
 
     <!-- Модификаторы -->
-    <div class="panel" id="modPanel">
+    <div class="panel">
         <div class="step">Шаг 4</div>
         <h2>🔧 Модификаторы</h2>
         <div id="modContainer">
+            <div class="group-header">🎯 Манипуляция снарядом</div>
+            <div class="mod-item"><input type="checkbox" value="2"> Самонаведение <span class="mod-cost">+2</span></div>
+            <div class="mod-item"><input type="checkbox" value="3"> Разделение луча <span class="mod-cost">+3</span></div>
+            <div class="mod-item"><input type="checkbox" value="4"> Цепная реакция (до 4х существ) <span class="mod-cost">+4</span></div>
+            <div class="mod-item"><input type="checkbox" value="2"> Рикошет (до 2ух существ) <span class="mod-cost">+2</span></div>
+
             <div class="group-header">⚔️ Эффекты на врагов</div>
             <div class="mod-item"><input type="checkbox" value="1"> Меткость (+2 к атаке) <span class="mod-cost">+1</span></div>
-            <div class="mod-item"><input type="checkbox" value="2"> Самонаведение <span class="mod-cost">+2</span></div>
             <div class="mod-item"><input type="checkbox" value="2"> Оглушение (1 раунд) <span class="mod-cost">+2</span></div>
             <div class="mod-item"><input type="checkbox" value="2"> Горение/Заморозка (1к4) <span class="mod-cost">+2</span></div>
             <div class="mod-item"><input type="checkbox" value="1"> Отбрасывание (5 фт) <span class="mod-cost">+1</span></div>
@@ -347,9 +329,6 @@
             <div class="mod-item"><input type="checkbox" value="2"> Труднопроходимая зона <span class="mod-cost">+2</span></div>
             <div class="mod-item"><input type="checkbox" value="2"> Притягивание (10 фт) <span class="mod-cost">+2</span></div>
             <div class="mod-item"><input type="checkbox" value="2"> Страх (1 раунд) <span class="mod-cost">+2</span></div>
-            <div class="mod-item"><input type="checkbox" value="3"> Разделение луча <span class="mod-cost">+3</span></div>
-            <div class="mod-item"><input type="checkbox" value="4"> Цепная реакция <span class="mod-cost">+4</span></div>
-            <div class="mod-item"><input type="checkbox" value="2"> Рикошет <span class="mod-cost">+2</span></div>
 
             <div class="group-header">✨ Положительные эффекты</div>
             <div class="mod-item"><input type="checkbox" value="3"> Отражение <span class="mod-cost">+3</span></div>
@@ -361,6 +340,16 @@
             <div class="mod-item" id="mod-reaction"><input type="checkbox" value="3" class="action-mod"> Реакция <span class="mod-cost">+3</span></div>
             <div class="mod-item" id="mod-delayed"><input type="checkbox" value="3" class="action-mod"> Отложенное <span class="mod-cost">+3</span></div>
 
+            <div class="group-header">⏳ Увеличение времени действия</div>
+            <div id="time-group">
+                <div class="mod-item" id="mod-time-1turn"><input type="checkbox" value="1" class="time-mod"> 1 ход <span class="mod-cost">+1</span></div>
+                <div class="mod-item" id="mod-time-1min"><input type="checkbox" value="2" class="time-mod"> 1 минута <span class="mod-cost">+2</span></div>
+                <div class="mod-item" id="mod-time-10min"><input type="checkbox" value="3" class="time-mod"> 10 минут <span class="mod-cost">+3</span></div>
+                <div class="mod-item" id="mod-time-30min"><input type="checkbox" value="4" class="time-mod"> 30 минут <span class="mod-cost">+4</span></div>
+                <div class="mod-item" id="mod-time-1hour"><input type="checkbox" value="5" class="time-mod"> 1 час <span class="mod-cost">+5</span></div>
+                <div class="mod-item" id="mod-time-conc"><input type="checkbox" value="2" class="time-mod"> Концентрация <span class="mod-cost">+2</span></div>
+            </div>
+
             <div class="group-header">🧩 Компоненты</div>
             <div class="mod-item"><input type="checkbox" value="2"> Тихая магия <span class="mod-cost">+2</span></div>
             <div class="mod-item"><input type="checkbox" value="1"> Неподвижная <span class="mod-cost">+1</span></div>
@@ -368,7 +357,7 @@
     </div>
 
     <!-- Итоговый расчёт -->
-    <div class="panel" id="resultPanel">
+    <div class="panel">
         <h2>📊 Итоговый расчёт</h2>
         <div class="row3">
             <div class="rscard"><div class="rl">Основа</div><div class="rv" id="r1">4</div></div>
@@ -383,7 +372,7 @@
     </div>
 
     <!-- Параметры заклинания -->
-    <div class="preview-panel" id="spellPreview">
+    <div class="preview-panel">
         <h3>📜 Параметры заклинания</h3>
         <div class="psub">Автоматически на основе выбора</div>
         <input type="text" class="spell-name-input" id="spellName" placeholder="Название заклинания..." maxlength="60">
@@ -406,19 +395,17 @@
         </div>
     </div>
 
-    <!-- Кнопка копирования -->
-    <div class="panel" style="margin-top: 10px;">
+    <div class="panel" style="margin-top:10px;">
         <h2>💾 Действия</h2>
         <button id="copyBtn" class="btn blu">📋 Копировать заклинание</button>
     </div>
-    <div class="footer">Магия Свободной Воли v5.0 · Стабильная iOS</div>
+    <div class="footer">Магия Свободной Воли v5.1 • Время действия • Группы</div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
     (function() {
-        // Элементы DOM
         const L = document.getElementById('L');
         const I = document.getElementById('I');
         const maxM = document.getElementById('maxM');
@@ -451,7 +438,6 @@
         const compDetails = document.getElementById('compDetails');
         const copyBtn = document.getElementById('copyBtn');
 
-        // Карты школ
         const schoolSelectMap = {
             'evoc': damageType, 'heal': healForm, 'illus': illusionForm, 'trans': transmutationForm,
             'necro': necromancyForm, 'abjur': abjurationForm, 'ench': enchantmentForm,
@@ -473,16 +459,10 @@
             23: ['evoc','illus','trans','necro','abjur','ench','divin','conju','heal','uni']
         };
 
-        // Вспомогательные функции
         function getMaxBaseByLevel(level) {
-            if (level >= 15) return 23;
-            if (level >= 13) return 17;
-            if (level >= 11) return 12;
-            if (level >= 9) return 8;
-            if (level >= 7) return 6;
-            if (level >= 5) return 4;
-            if (level >= 3) return 2;
-            return 1;
+            if (level >= 15) return 23; if (level >= 13) return 17; if (level >= 11) return 12;
+            if (level >= 9) return 8; if (level >= 7) return 6; if (level >= 5) return 4;
+            if (level >= 3) return 2; return 1;
         }
         function getBaseDescription(value) {
             const map = {1:'0 — Искра',2:'1 — Простой',4:'2 — Средний',6:'3 — Значительный',8:'4 — Сложный',12:'5 — Великий',17:'6 — Легендарный',23:'7 — Эпический'};
@@ -525,6 +505,7 @@
             if (!allowed.includes(currentSchool) && firstAvailable !== -1) S2.selectedIndex = firstAvailable;
             updateSchoolVisibility();
             updateDynamicOptionsRestrictions();
+            updateTimeGroupAvailability();
             calc();
         }
 
@@ -548,8 +529,7 @@
                 'conju': ['🌀 Тип призыва','⭐ Уровень угрозы'], 'uni': ['🌟 Тип эффекта','🌐 Охват']
             };
             const [main, dice] = labels[school] || ['🔥 Тип / Лечение','🦴 Кости урона/хила'];
-            previewMainLabel.textContent = main;
-            previewDiceLabel.textContent = dice;
+            previewMainLabel.textContent = main; previewDiceLabel.textContent = dice;
         }
 
         function updateDynamicOptionsRestrictions() {
@@ -569,9 +549,7 @@
                     }
                 }
                 if (!currentValid) {
-                    for (let i = 0; i < options.length; i++) {
-                        if (!options[i].disabled) { select.selectedIndex = i; break; }
-                    }
+                    for (let i = 0; i < options.length; i++) { if (!options[i].disabled) { select.selectedIndex = i; break; } }
                 }
             });
         }
@@ -598,14 +576,46 @@
             }
         }
 
-        // Основной расчёт
+        function updateTimeModifiers() {
+            const timeMods = document.querySelectorAll('.time-mod');
+            const anyChecked = Array.from(timeMods).some(cb => cb.checked);
+            timeMods.forEach(cb => {
+                const parent = cb.closest('.mod-item');
+                if (!parent) return;
+                if (anyChecked && !cb.checked) parent.classList.add('mod-disabled');
+                else parent.classList.remove('mod-disabled');
+            });
+        }
+
+        function updateTimeGroupAvailability() {
+            const school = S2.options[S2.selectedIndex].getAttribute('data-school');
+            const timeGroup = document.getElementById('time-group');
+            if (!timeGroup) return;
+            const disableTime = (school === 'evoc' || school === 'illus');
+            const timeItems = timeGroup.querySelectorAll('.mod-item');
+            timeItems.forEach(item => {
+                if (disableTime) {
+                    item.classList.add('mod-disabled');
+                    const cb = item.querySelector('input.time-mod');
+                    if (cb && cb.checked) {
+                        cb.checked = false;
+                        cb.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                } else {
+                    item.classList.remove('mod-disabled');
+                }
+            });
+            if (disableTime) {
+                updateTimeModifiers();
+            }
+        }
+
         function calc() {
             const level = parseInt(L.value) || 1;
             const intMod = parseInt(I.value) || 0;
             const maxMana = level * 3 + level * intMod;
             const limitMana = Math.ceil(maxMana / 2);
-            maxM.textContent = maxMana;
-            limM.textContent = limitMana;
+            maxM.textContent = maxMana; limM.textContent = limitMana;
 
             const base = parseInt(S1.value);
             const schoolBase = parseInt(S2.value);
@@ -619,11 +629,7 @@
             const total = base + totalSchool + mods;
             const baseSL = parseInt(S1.options[S1.selectedIndex].getAttribute('data-sl')) || 10;
             const sl = base === 1 ? '—' : (baseSL + Math.floor(count / 2));
-            r1.textContent = base;
-            r2.textContent = totalSchool;
-            r3.textContent = mods;
-            rt.textContent = total;
-            rs.textContent = sl;
+            r1.textContent = base; r2.textContent = totalSchool; r3.textContent = mods; rt.textContent = total; rs.textContent = sl;
 
             if (total > limitMana) {
                 rtc.style.borderColor = '#f87171'; rtc.style.background = '#2a1515';
@@ -633,7 +639,6 @@
                 rlc.style.borderColor = '#252545'; rlv.textContent = 'ОК'; rlv.style.color = '#f0c060';
             }
 
-            // Детали заклинания
             const school = S2.options[S2.selectedIndex].getAttribute('data-school');
             const select = schoolSelectMap[school];
             const opt = select?.options[select.selectedIndex];
@@ -649,28 +654,14 @@
                 mainText = opt.getAttribute('data-illus-name');
                 diceText = opt.getAttribute('data-illus-dur');
                 durationOverride = diceText;
-            } else if (school === 'trans' && opt) {
-                mainText = opt.getAttribute('data-trans-name');
-                diceText = opt.getAttribute('data-trans-weight');
-            } else if (school === 'necro' && opt) {
-                mainText = opt.getAttribute('data-necro-name');
-                diceText = multiplyDice(opt.getAttribute('data-necro-dice')||'1к8', mult);
-            } else if (school === 'abjur' && opt) {
-                mainText = opt.getAttribute('data-abjur-name');
-                diceText = opt.getAttribute('data-abjur-bonus');
-            } else if (school === 'ench' && opt) {
-                mainText = opt.getAttribute('data-ench-name');
-                diceText = opt.getAttribute('data-ench-targets');
-            } else if (school === 'divin' && opt) {
-                mainText = opt.getAttribute('data-divin-name');
-                diceText = opt.getAttribute('data-divin-range');
-            } else if (school === 'conju' && opt) {
-                mainText = opt.getAttribute('data-conju-name');
-                diceText = opt.getAttribute('data-conju-cr');
-            } else if (school === 'uni' && opt) {
-                mainText = opt.getAttribute('data-uni-name');
-                diceText = opt.getAttribute('data-uni-scope');
-            }
+            } else if (school === 'trans' && opt) { mainText = opt.getAttribute('data-trans-name'); diceText = opt.getAttribute('data-trans-weight'); }
+            else if (school === 'necro' && opt) { mainText = opt.getAttribute('data-necro-name'); diceText = multiplyDice(opt.getAttribute('data-necro-dice')||'1к8', mult); }
+            else if (school === 'abjur' && opt) { mainText = opt.getAttribute('data-abjur-name'); diceText = opt.getAttribute('data-abjur-bonus'); }
+            else if (school === 'ench' && opt) { mainText = opt.getAttribute('data-ench-name'); diceText = opt.getAttribute('data-ench-targets'); }
+            else if (school === 'divin' && opt) { mainText = opt.getAttribute('data-divin-name'); diceText = opt.getAttribute('data-divin-range'); }
+            else if (school === 'conju' && opt) { mainText = opt.getAttribute('data-conju-name'); diceText = opt.getAttribute('data-conju-cr'); }
+            else if (school === 'uni' && opt) { mainText = opt.getAttribute('data-uni-name'); diceText = opt.getAttribute('data-uni-scope'); }
+
             let verbal = true, somatic = true;
             const activeMods = [];
             document.querySelectorAll('.mod-item input[type="checkbox"]').forEach(cb => {
@@ -693,8 +684,14 @@
 
             previewMain.textContent = mainText;
             previewDice.textContent = diceText;
+
+            // Определение длительности с учётом модов времени
             let duration = durationOverride || 'Мгновенно';
-            if (!durationOverride) {
+            const timeCb = document.querySelector('.time-mod:checked');
+            if (timeCb) {
+                const timeLabel = timeCb.parentElement.textContent.trim().split('(')[0].trim();
+                duration = timeLabel;
+            } else if (!durationOverride) {
                 document.querySelectorAll('.mod-item input[type="checkbox"]').forEach(cb => {
                     if (cb.checked) {
                         const l = cb.parentElement.textContent.trim();
@@ -731,7 +728,6 @@
             return bonus > 0 ? `${newCnt}к${die}+${bonus}` : `${newCnt}к${die}`;
         }
 
-        // Копирование
         function copyText() {
             calc();
             const name = spellName.value.trim() || 'Без названия';
@@ -739,63 +735,43 @@
             const mods = activeModsDiv.textContent === 'Нет' ? 'Нет' : activeModsDiv.textContent;
             const action = actionDisplay.textContent;
             const condition = action === 'Отложенное' ? actionCondition.value.trim() : '';
-            const text = `🎴 Заклинание: ${name}\n📝 Описание: ${desc}\n⚡ Действие: ${action}${condition ? ' ('+condition+')' : ''}\n⚡ Мана: ${rt.textContent} | СЛ: ${rs.textContent}\n🔥 Тип/Эффект: ${previewMain.textContent}\n🦴 Кости/Параметр: ${previewDice.textContent}\n⏱ Длительность: ${previewDuration.textContent}\n🧩 Компоненты: ${previewComponents.textContent}\n🔧 Модификаторы: ${mods}\nСоздано в Калькуляторе Маны v5.0`;
+            const text = `🎴 Заклинание: ${name}\n📝 Описание: ${desc}\n⚡ Действие: ${action}${condition ? ' ('+condition+')' : ''}\n⚡ Мана: ${rt.textContent} | СЛ: ${rs.textContent}\n🔥 Тип/Эффект: ${previewMain.textContent}\n🦴 Кости/Параметр: ${previewDice.textContent}\n⏱ Длительность: ${previewDuration.textContent}\n🧩 Компоненты: ${previewComponents.textContent}\n🔧 Модификаторы: ${mods}\nСоздано в Калькуляторе Маны v5.1`;
 
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(text).then(() => showToast('✅ Заклинание скопировано!')).catch(() => fallbackCopy(text));
-            } else {
-                fallbackCopy(text);
-            }
+            } else fallbackCopy(text);
         }
 
         function fallbackCopy(text) {
             const ta = document.createElement('textarea');
             ta.value = text;
-            ta.style.position = 'fixed';
-            ta.style.top = '0';
-            ta.style.left = '0';
-            ta.style.width = '1px';
-            ta.style.height = '1px';
-            ta.style.opacity = '0';
-            ta.style.pointerEvents = 'none';
+            ta.style.position = 'fixed'; ta.style.top = '0'; ta.style.left = '0';
+            ta.style.width = '1px'; ta.style.height = '1px'; ta.style.opacity = '0'; ta.style.pointerEvents = 'none';
             document.body.appendChild(ta);
-            ta.focus();
-            ta.select();
-            try {
-                document.execCommand('copy');
-                showToast('✅ Скопировано!');
-            } catch (e) {
-                showToast('Скопируйте вручную');
-            }
+            ta.focus(); ta.select();
+            try { document.execCommand('copy'); showToast('✅ Скопировано!'); } catch (e) { showToast('Скопируйте вручную'); }
             document.body.removeChild(ta);
         }
 
         function showToast(msg) {
-            const t = document.getElementById('toast');
-            t.textContent = msg;
-            t.style.display = 'block';
-            t.style.opacity = '1';
+            const t = document.getElementById('toast'); t.textContent = msg;
+            t.style.display = 'block'; t.style.opacity = '1';
             clearTimeout(t._timeout);
-            t._timeout = setTimeout(() => {
-                t.style.opacity = '0';
-                setTimeout(() => { t.style.display = 'none'; }, 300);
-            }, 2000);
+            t._timeout = setTimeout(() => { t.style.opacity = '0'; setTimeout(() => { t.style.display = 'none'; }, 300); }, 2000);
         }
 
-        // Привязка событий
         L.addEventListener('input', () => { updateBaseAvailability(); calc(); });
         L.addEventListener('blur', () => { updateBaseAvailability(); calc(); });
         I.addEventListener('input', calc);
         I.addEventListener('blur', calc);
         S1.addEventListener('change', () => { updateSchoolAvailability(); calc(); });
-        S2.addEventListener('change', () => { updateSchoolVisibility(); calc(); });
+        S2.addEventListener('change', () => { updateSchoolVisibility(); updateTimeGroupAvailability(); calc(); });
         S3.addEventListener('change', calc);
         document.querySelectorAll('.school-option-block select').forEach(sel => sel.addEventListener('change', calc));
         spellName.addEventListener('input', calc);
         spellDesc.addEventListener('input', calc);
         actionCondition.addEventListener('input', calc);
 
-        // Модификаторы
         document.querySelectorAll('.mod-item').forEach(item => {
             item.addEventListener('click', function(e) {
                 if (e.target.type === 'checkbox') return;
@@ -804,6 +780,7 @@
                     cb.checked = !cb.checked;
                     cb.dispatchEvent(new Event('change', { bubbles: true }));
                     if (cb.classList.contains('action-mod')) updateActionModifiers();
+                    if (cb.classList.contains('time-mod')) updateTimeModifiers();
                     calc();
                 }
             });
@@ -812,17 +789,15 @@
             cb.addEventListener('click', e => e.stopPropagation());
             cb.addEventListener('change', function() {
                 if (this.classList.contains('action-mod')) updateActionModifiers();
+                if (this.classList.contains('time-mod')) updateTimeModifiers();
                 calc();
             });
         });
 
-        // Кнопка копирования
         copyBtn.addEventListener('click', copyText);
 
-        // Инициализация
         updateBaseAvailability();
         updateSchoolAvailability();
-        calc();
     })();
 </script>
 </body>
