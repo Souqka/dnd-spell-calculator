@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Калькулятор Маны v5.5 — D&D 5e</title>
+    <title>Калькулятор Маны v5.6 — D&D 5e</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
     <style>
         :root {
             --bg: #0a0a14; --panel: #12122a; --accent: #7b2ff7; --accent2: #c084fc;
@@ -11,12 +12,18 @@
             --success: #4ade80; --border: #252545; --card: #181835; --radius: 14px;
             --safe-bottom: env(safe-area-inset-bottom, 10px);
         }
+        .light-theme {
+            --bg: #f5f5f5; --panel: #ffffff; --accent: #7b2ff7; --accent2: #5a2e9e;
+            --gold: #b8860b; --text: #1a1a1a; --text2: #555555; --danger: #cc0000;
+            --success: #2e7d32; --border: #e0e0e0; --card: #fafafa;
+        }
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
         body {
             background: var(--bg); color: var(--text);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh; padding: 12px 12px var(--safe-bottom);
-            font-size: 16px; -webkit-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; user-select: none;
+            font-size: 16px; -webkit-text-size-adjust: 100%; -webkit-font-smoothing: antialiased;
+            user-select: none; transition: background 0.2s, color 0.2s;
         }
         .container { max-width: 520px; margin: 0 auto; }
         .header { text-align:center; padding:18px; background:var(--panel); border-radius:var(--radius); border:1px solid var(--border); margin-bottom:10px; }
@@ -33,13 +40,17 @@
         .scard .l { font-size:0.6em; color:var(--text2); text-transform:uppercase; }
         .scard .v { font-size:1.3em; font-weight:bold; color:var(--gold); }
         .scard input { width:100%; text-align:center; font-size:1.2em; font-weight:bold; background:#0a0a18; border:1px solid var(--border); color:var(--gold); border-radius:8px; padding:10px 4px; -webkit-appearance:none; caret-color:var(--accent); }
+        .light-theme .scard input { background:#ffffff; }
         .scard input:focus { border-color:var(--accent); outline:none; }
         select { width:100%; padding:12px 14px; background:#0a0a18; color:var(--text); border:1px solid var(--border); border-radius:10px; font-size:0.9em; -webkit-appearance:none; appearance:none; margin-top:6px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath d='M7 10L1 4h12z' fill='%23c084fc'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; background-color:#0a0a18; cursor:pointer; }
+        .light-theme select { background-color:#ffffff; }
         select:focus { border-color:var(--accent); outline:none; }
         .mod-item { display:flex; align-items:center; gap:10px; background:var(--card); padding:12px 14px; border-radius:10px; border:1px solid var(--border); margin-bottom:6px; font-size:0.85em; cursor:pointer; transition:background 0.15s; }
         .mod-item:active { background:#202045; }
+        .light-theme .mod-item:active { background:#e0e0e0; }
         .mod-item input[type="checkbox"] { width:22px; height:22px; accent-color:var(--accent); flex-shrink:0; }
         .mod-cost { margin-left:auto; background:#2a2a40; padding:4px 10px; border-radius:12px; font-size:0.8em; font-weight:bold; color:var(--gold); }
+        .light-theme .mod-cost { background:#ececec; }
         .mod-item.mod-disabled { opacity:0.4; pointer-events:none; }
         .group-header { color:var(--accent2); font-size:0.75em; font-weight:600; margin:14px 0 6px; text-transform:uppercase; }
         .btn { display:block; width:100%; padding:14px; border-radius:12px; cursor:pointer; font-size:0.95em; font-weight:600; text-align:center; border:2px solid var(--border); color:var(--text); background:var(--card); -webkit-appearance:none; margin-bottom:8px; transition:all 0.2s; }
@@ -47,9 +58,11 @@
         .btn.blu { border-color:#60a5fa; color:#60a5fa; font-size:1em; padding:16px; }
         .rscard { background:var(--card); border-radius:10px; padding:12px 6px; text-align:center; border:1px solid var(--border); }
         .rscard.big { border-color:var(--accent); background:#1f1635; }
+        .light-theme .rscard.big { background:#e8e0f0; }
         .rscard .rl { font-size:0.6em; color:var(--text2); text-transform:uppercase; }
         .rscard .rv { font-size:1.4em; font-weight:bold; color:var(--gold); }
         .preview-panel { background:#0a0a14; border-radius:var(--radius); border:2px solid var(--accent); padding:16px; margin-top:8px; }
+        .light-theme .preview-panel { background:#ffffff; }
         .preview-panel h3 { text-align:center; color:var(--gold); font-size:1.1em; }
         .preview-panel .psub { text-align:center; color:var(--text2); font-size:0.7em; margin-bottom:12px; }
         .preview-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px; }
@@ -58,18 +71,23 @@
         .preview-item .pv { font-size:0.9em; font-weight:bold; color:var(--gold); word-break:break-word; }
         .comp-block { background:var(--card); border-radius:8px; padding:10px; text-align:center; border:1px solid var(--border); margin-top:8px; font-size:0.85em; color:#b0b0c0; }
         .spell-name-input { width:100%; padding:12px 14px; background:#0a0a18; color:var(--gold); border:1px solid var(--border); border-radius:10px; font-size:1em; font-weight:600; text-align:center; -webkit-appearance:none; caret-color:var(--accent); margin-bottom:8px; }
+        .light-theme .spell-name-input { background:#ffffff; }
         .spell-name-input:focus { border-color:var(--accent); outline:none; }
         .spell-desc-input { width:100%; padding:10px 14px; background:#0a0a18; color:var(--text); border:1px solid var(--border); border-radius:10px; font-size:0.85em; -webkit-appearance:none; caret-color:var(--accent); resize:vertical; min-height:60px; font-family:inherit; margin-bottom:8px; }
+        .light-theme .spell-desc-input { background:#ffffff; }
         .spell-desc-input:focus { border-color:var(--accent); outline:none; }
         .action-condition-input { width:100%; padding:8px 12px; background:#0a0a18; color:var(--gold); border:1px solid var(--border); border-radius:8px; font-size:0.8em; text-align:center; -webkit-appearance:none; caret-color:var(--accent); margin-top:6px; display:none; }
+        .light-theme .action-condition-input { background:#ffffff; }
         .action-condition-input:focus { border-color:var(--accent); outline:none; }
         .toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:#1f1635; color:var(--gold); padding:14px 24px; border-radius:24px; border:1px solid var(--accent); font-size:0.9em; font-weight:600; z-index:9999; display:none; text-align:center; max-width:90%; box-shadow:0 8px 20px rgba(0,0,0,0.5); backdrop-filter:blur(10px); }
-        .footer { text-align:center; color:#3a3a50; font-size:0.6em; padding:12px; margin-top:6px; }
-        .school-options-label { font-size:0.7em; color:#9090a0; display:block; margin-bottom:4px; }
+        .light-theme .toast { background:#ffffff; color:#1a1a1a; box-shadow:0 4px 12px rgba(0,0,0,0.1); }
+        .footer { text-align:center; color:var(--text2); font-size:0.6em; padding:12px; margin-top:6px; }
+        .school-options-label { font-size:0.7em; color:var(--text2); display:block; margin-bottom:4px; }
         .mods-list { color:var(--gold); font-size:0.8em; line-height:1.5; margin-top:4px; word-break:break-word; }
         .saved-group { margin-bottom:16px; }
         .saved-group h4 { color:var(--accent2); margin:8px 0 6px; font-size:0.9em; padding:6px 10px; background:var(--card); border-radius:8px; border-left:3px solid var(--accent); }
         .saved-spell-card { background: linear-gradient(135deg, #1e1e40, #181835); border:1px solid var(--border); border-radius:12px; padding:12px; margin-bottom:8px; box-shadow:0 2px 8px rgba(0,0,0,0.3); }
+        .light-theme .saved-spell-card { background: linear-gradient(135deg, #f0f0f0, #e8e8e8); box-shadow:0 2px 8px rgba(0,0,0,0.05); }
         .saved-spell-card .ss-name { font-weight:700; color:var(--gold); font-size:1em; }
         .saved-spell-card .ss-desc { font-size:0.8em; color:var(--text2); margin:4px 0 6px; font-style:italic; }
         .saved-spell-card .ss-details { font-size:0.8em; color:var(--text2); margin:6px 0; display:flex; flex-wrap:wrap; gap:8px; }
@@ -77,19 +95,26 @@
         .saved-spell-actions { display:flex; gap:8px; margin-top:8px; justify-content:flex-end; }
         .saved-spell-actions button { background:var(--card); border:1px solid var(--border); color:var(--text); padding:6px 12px; border-radius:8px; font-size:0.8em; cursor:pointer; transition:0.2s; }
         .saved-spell-actions button:active { background:#2a2a40; }
+        .profile-manager { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:10px; }
+        .profile-manager select { flex:1; }
+        .profile-manager button { background:var(--card); border:1px solid var(--border); color:var(--text); padding:8px 14px; border-radius:8px; font-size:0.9em; cursor:pointer; }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
         <h1>✨ Калькулятор Маны ✨</h1>
-        <div class="sub">Магия Свободной Воли для D&D 5e<br>v5.5 · Усиление ×2–×5 · Иллюзия без времени</div>
+        <div class="sub">Магия Свободной Воли для D&D 5e<br>v5.6 · Профили · Темы · Формула маны</div>
     </div>
 
-    <!-- Характеристики -->
+    <!-- Профили персонажей -->
     <div class="panel">
         <div class="step">Персонаж</div>
-        <h2>🧙 Характеристики</h2>
+        <div class="profile-manager">
+            <select id="profileSelect"></select>
+            <button id="newProfileBtn">+</button>
+            <button id="deleteProfileBtn">🗑</button>
+        </div>
         <div class="row4">
             <div class="scard"><div class="l">Уровень</div><input type="number" id="L" value="1" min="1" max="20" inputmode="numeric"></div>
             <div class="scard"><div class="l">Интеллект</div><input type="number" id="I" value="0" min="-5" max="10" inputmode="numeric"></div>
@@ -139,7 +164,7 @@
             <option value="1" data-school="uni">Универсальная — +1</option>
         </select>
         <div id="dynamicSchoolOptions" style="margin-top:10px;">
-            <!-- Эвокация -->
+            <!-- Все школы (полные блоки) -->
             <div id="evocOptions" class="school-option-block">
                 <label class="school-options-label">🔥 Тип урона</label>
                 <select id="damageType">
@@ -155,7 +180,26 @@
                     <option value="5" data-dice="4к6" data-name="Яд" data-min-level="17">Яд (4к6) — +5</option>
                 </select>
             </div>
-            <!-- Трансмутация -->
+            <div id="healOptions" class="school-option-block" style="display:none;">
+                <label class="school-options-label">💚 Форма лечения</label>
+                <select id="healForm">
+                    <option value="0" data-heal-dice="1к8" data-name="1 цель" data-min-level="1">1 цель — 1к8 — +0</option>
+                    <option value="2" data-heal-dice="2к8" data-name="Группа (3)" data-min-level="2">Группа (3) — 2к8 — +2</option>
+                    <option value="4" data-heal-dice="3к8" data-name="Массовое (6)" data-min-level="4">Массовое (6) — 3к8 — +4</option>
+                    <option value="7" data-heal-dice="4к8" data-name="Аура (все)" data-min-level="6">Аура (все) — 4к8 — +7</option>
+                    <option value="10" data-heal-dice="6к8" data-name="Воскрешение" data-min-level="17">Воскрешение/Регенерация — 6к8 — +10</option>
+                </select>
+            </div>
+            <div id="abjurOptions" class="school-option-block" style="display:none;">
+                <label class="school-options-label">🛡 Тип защиты</label>
+                <select id="abjurationForm">
+                    <option value="0" data-abjur-bonus="2" data-abjur-name="Личный щит" data-min-level="1">Личный щит +2 КД — +0</option>
+                    <option value="1" data-abjur-bonus="2" data-abjur-name="Левитирующий щит" data-min-level="2">Левитирующий щит +2 КД (авто) — +1</option>
+                    <option value="2" data-abjur-bonus="2" data-abjur-name="Щит на союзника" data-min-level="4">Щит на союзника +2 КД (1 цель) — +2</option>
+                    <option value="3" data-abjur-bonus="2" data-abjur-name="Массовый щит" data-min-level="6">Массовый щит +2 КД (группа) — +3</option>
+                    <option value="5" data-abjur-bonus="2" data-abjur-name="Непроницаемый барьер" data-min-level="17">Непроницаемый барьер +2 КД — +5</option>
+                </select>
+            </div>
             <div id="transOptions" class="school-option-block" style="display:none;">
                 <label class="school-options-label">🔧 Размер/вес предмета</label>
                 <select id="transmutationForm">
@@ -167,7 +211,6 @@
                     <option value="7" data-trans-name="Колоссальный" data-trans-weight="до 2 тонн" data-min-level="17">Колоссальный (до 2 тонн) — +7</option>
                 </select>
             </div>
-            <!-- Некромантия -->
             <div id="necroOptions" class="school-option-block" style="display:none;">
                 <label class="school-options-label">💀 Тип некромантии</label>
                 <select id="necromancyForm">
@@ -179,18 +222,6 @@
                     <option value="10" data-necro-name="Армия нежити" data-necro-dice="6к8" data-min-level="17">Армия нежити (6к8) — +10</option>
                 </select>
             </div>
-            <!-- Ограждение -->
-            <div id="abjurOptions" class="school-option-block" style="display:none;">
-                <label class="school-options-label">🛡 Тип защиты</label>
-                <select id="abjurationForm">
-                    <option value="0" data-abjur-bonus="2" data-abjur-name="Личный щит" data-min-level="1">Личный щит +2 КД — +0</option>
-                    <option value="1" data-abjur-bonus="2" data-abjur-name="Левитирующий щит" data-min-level="2">Левитирующий щит +2 КД (авто) — +1</option>
-                    <option value="2" data-abjur-bonus="2" data-abjur-name="Щит на союзника" data-min-level="4">Щит на союзника +2 КД (1 цель) — +2</option>
-                    <option value="3" data-abjur-bonus="2" data-abjur-name="Массовый щит" data-min-level="6">Массовый щит +2 КД (группа) — +3</option>
-                    <option value="5" data-abjur-bonus="2" data-abjur-name="Непроницаемый барьер" data-min-level="17">Непроницаемый барьер +2 КД — +5</option>
-                </select>
-            </div>
-            <!-- Очарование -->
             <div id="enchOptions" class="school-option-block" style="display:none;">
                 <label class="school-options-label">🧠 Тип контроля</label>
                 <select id="enchantmentForm">
@@ -201,7 +232,6 @@
                     <option value="8" data-ench-name="Изменение памяти" data-ench-targets="1 цель (память)" data-min-level="17">Изменение памяти — +8</option>
                 </select>
             </div>
-            <!-- Прорицание -->
             <div id="divinOptions" class="school-option-block" style="display:none;">
                 <label class="school-options-label">🔮 Тип прорицания</label>
                 <select id="divinationForm">
@@ -212,7 +242,6 @@
                     <option value="7" data-divin-name="Контакт с высшими силами" data-divin-range="Неограниченная" data-min-level="17">Контакт с высшими силами — +7</option>
                 </select>
             </div>
-            <!-- Призыв -->
             <div id="conjuOptions" class="school-option-block" style="display:none;">
                 <label class="school-options-label">🌀 Тип призыва</label>
                 <select id="conjurationForm">
@@ -223,18 +252,6 @@
                     <option value="9" data-conju-name="Элементаль/демон" data-conju-cr="CR 5+" data-min-level="17">Элементаль/демон (CR 5+) — +9</option>
                 </select>
             </div>
-            <!-- Лечение -->
-            <div id="healOptions" class="school-option-block" style="display:none;">
-                <label class="school-options-label">💚 Форма лечения</label>
-                <select id="healForm">
-                    <option value="0" data-heal-dice="1к8" data-name="1 цель" data-min-level="1">1 цель — 1к8 — +0</option>
-                    <option value="2" data-heal-dice="2к8" data-name="Группа (3)" data-min-level="2">Группа (3) — 2к8 — +2</option>
-                    <option value="4" data-heal-dice="3к8" data-name="Массовое (6)" data-min-level="4">Массовое (6) — 3к8 — +4</option>
-                    <option value="7" data-heal-dice="4к8" data-name="Аура (все)" data-min-level="6">Аура (все) — 4к8 — +7</option>
-                    <option value="10" data-heal-dice="6к8" data-name="Воскрешение" data-min-level="17">Воскрешение/Регенерация — 6к8 — +10</option>
-                </select>
-            </div>
-            <!-- Универсальная -->
             <div id="uniOptions" class="school-option-block" style="display:none;">
                 <label class="school-options-label">🌟 Тип эффекта</label>
                 <select id="universalForm">
@@ -248,7 +265,7 @@
         </div>
     </div>
 
-    <!-- Усиление (обновлено) -->
+    <!-- Усиление -->
     <div class="panel">
         <div class="step">Шаг 3</div>
         <h2>⚡ Усиление заклинания</h2>
@@ -267,12 +284,12 @@
         <div class="step">Шаг 4</div>
         <h2>🔧 Модификаторы</h2>
         <div id="modContainer">
+            <!-- Группы модификаторов идентичны v5.5 -->
             <div class="group-header">🎯 Манипуляция снарядом</div>
             <div class="mod-item"><input type="checkbox" value="2"> Самонаведение <span class="mod-cost">+2</span></div>
             <div class="mod-item"><input type="checkbox" value="3"> Разделение луча <span class="mod-cost">+3</span></div>
             <div class="mod-item"><input type="checkbox" value="4"> Цепная реакция (до 4х существ) <span class="mod-cost">+4</span></div>
             <div class="mod-item"><input type="checkbox" value="2"> Рикошет (до 2ух существ) <span class="mod-cost">+2</span></div>
-
             <div class="group-header">⚔️ Эффекты на врагов</div>
             <div class="mod-item"><input type="checkbox" value="1"> Меткость (+2 к атаке) <span class="mod-cost">+1</span></div>
             <div class="mod-item"><input type="checkbox" value="2"> Оглушение (1 раунд) <span class="mod-cost">+2</span></div>
@@ -283,17 +300,14 @@
             <div class="mod-item"><input type="checkbox" value="2"> Труднопроходимая зона <span class="mod-cost">+2</span></div>
             <div class="mod-item"><input type="checkbox" value="2"> Притягивание (10 фт) <span class="mod-cost">+2</span></div>
             <div class="mod-item"><input type="checkbox" value="2"> Страх (1 раунд) <span class="mod-cost">+2</span></div>
-
             <div class="group-header">✨ Положительные эффекты</div>
             <div class="mod-item"><input type="checkbox" value="3"> Отражение <span class="mod-cost">+3</span></div>
             <div class="mod-item"><input type="checkbox" value="2"> Поглощение (+1к4 маны) <span class="mod-cost">+2</span></div>
             <div class="mod-item"><input type="checkbox" value="3"> Незаметная <span class="mod-cost">+3</span></div>
-
             <div class="group-header">⚡ Тип действия</div>
             <div class="mod-item" id="mod-bonus"><input type="checkbox" value="4" class="action-mod"> Бонусное - действие <span class="mod-cost">+4</span></div>
             <div class="mod-item" id="mod-reaction"><input type="checkbox" value="3" class="action-mod"> Реакция <span class="mod-cost">+3</span></div>
             <div class="mod-item" id="mod-delayed"><input type="checkbox" value="3" class="action-mod"> Отложенное <span class="mod-cost">+3</span></div>
-
             <div class="group-header">⏳ Увеличение времени действия</div>
             <div id="time-group">
                 <div class="mod-item" id="mod-time-1turn"><input type="checkbox" value="1" class="time-mod"> 1 ход <span class="mod-cost">+1</span></div>
@@ -303,7 +317,6 @@
                 <div class="mod-item" id="mod-time-1hour"><input type="checkbox" value="5" class="time-mod"> 1 час <span class="mod-cost">+5</span></div>
                 <div class="mod-item" id="mod-time-conc"><input type="checkbox" value="2" class="time-mod"> Концентрация <span class="mod-cost">+2</span></div>
             </div>
-
             <div class="group-header">🧩 Компоненты</div>
             <div class="mod-item"><input type="checkbox" value="2"> Тихая магия <span class="mod-cost">+2</span></div>
             <div class="mod-item"><input type="checkbox" value="1"> Неподвижная <span class="mod-cost">+1</span></div>
@@ -328,7 +341,6 @@
     <!-- Параметры заклинания -->
     <div class="preview-panel">
         <h3>📜 Параметры заклинания</h3>
-        <div class="psub">Автоматически на основе выбора</div>
         <input type="text" class="spell-name-input" id="spellName" placeholder="Название заклинания..." maxlength="60">
         <textarea class="spell-desc-input" id="spellDesc" placeholder="Описание заклинания... (необязательно)" rows="2"></textarea>
         <div class="preview-item" style="margin-bottom:10px;">
@@ -342,14 +354,11 @@
             <div class="preview-item"><div class="pl">⏱ Продолжительность</div><div class="pv" id="previewDuration">Мгновенно</div></div>
             <div class="preview-item"><div class="pl">🧩 Компоненты</div><div class="pv" id="previewComponents">Вербальный, Соматический</div></div>
         </div>
-        <div class="comp-block" id="compDetails"><span style="color:#c084fc;">🗣 Голос:</span> Да &nbsp;|&nbsp; <span style="color:#c084fc;">✋ Жесты:</span> Да</div>
-        <div class="comp-block" style="margin-top:8px;">
-            <span style="color:#c084fc;">🔧 Активные модификаторы:</span>
-            <div id="activeMods" class="mods-list">Нет</div>
-        </div>
+        <div class="comp-block" id="compDetails"><span style="color:var(--accent2);">🗣 Голос:</span> Да &nbsp;|&nbsp; <span style="color:var(--accent2);">✋ Жесты:</span> Да</div>
+        <div class="comp-block" style="margin-top:8px;"><span style="color:var(--accent2);">🔧 Активные модификаторы:</span> <div id="activeMods" class="mods-list">Нет</div></div>
     </div>
 
-    <!-- Сохранение -->
+    <!-- Сохранение заклинания -->
     <div class="panel" id="savePanel">
         <h2>💾 Сохранить заклинание</h2>
         <div class="row2">
@@ -365,18 +374,32 @@
         <button id="copyBtn" class="btn blu">📋 Копировать заклинание</button>
     </div>
 
-    <!-- Сохранённые -->
+    <!-- Настройки -->
+    <div class="panel settings-panel">
+        <h2>⚙️ Настройки</h2>
+        <label>Тема</label>
+        <select id="themeSelect">
+            <option value="dark" selected>Тёмная</option>
+            <option value="light">Светлая</option>
+        </select>
+        <label>Формула маны</label>
+        <input type="text" id="manaFormulaInput" placeholder="level*3 + level*int">
+        <button id="applySettingsBtn" class="btn">Применить</button>
+    </div>
+
+    <!-- Сохранённые заклинания -->
     <div class="panel" id="savedSpellsPanel">
         <h2>📚 Сохранённые заклинания</h2>
         <div id="savedSpellsList">Нет сохранённых заклинаний</div>
     </div>
-    <div class="footer">Магия Свободной Воли v5.5 · Усиление ×2–×5 · Кости умножаются прямо</div>
+    <div class="footer">Магия Свободной Воли v5.6 · Профили · Темы · Формула маны</div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
     (function() {
+        // ---------- DOM элементы ----------
         const L = document.getElementById('L');
         const I = document.getElementById('I');
         const spellMod = document.getElementById('spellMod');
@@ -413,7 +436,14 @@
         const groupSelect = document.getElementById('groupSelect');
         const newGroupInput = document.getElementById('newGroupName');
         const savedList = document.getElementById('savedSpellsList');
+        const profileSelect = document.getElementById('profileSelect');
+        const newProfileBtn = document.getElementById('newProfileBtn');
+        const deleteProfileBtn = document.getElementById('deleteProfileBtn');
+        const themeSelect = document.getElementById('themeSelect');
+        const manaFormulaInput = document.getElementById('manaFormulaInput');
+        const applySettingsBtn = document.getElementById('applySettingsBtn');
 
+        // ---------- Карты школ ----------
         const schoolSelectMap = {
             'evoc': damageType, 'heal': healForm, 'trans': transmutationForm,
             'necro': necromancyForm, 'abjur': abjurationForm, 'ench': enchantmentForm,
@@ -450,9 +480,201 @@
             spellMod.textContent = (total >= 0 ? '+' : '') + total;
         }
 
+        // ---------- Профили ----------
+        let profiles = JSON.parse(localStorage.getItem('dnd_profiles') || '{"default":{"name":"Default","level":1,"int":0}}');
+        let currentProfile = localStorage.getItem('dnd_currentProfile') || 'default';
+
+        function updateProfileList() {
+            profileSelect.innerHTML = '';
+            Object.keys(profiles).forEach(key => {
+                const opt = document.createElement('option');
+                opt.value = key;
+                opt.textContent = profiles[key].name || key;
+                profileSelect.appendChild(opt);
+            });
+            profileSelect.value = currentProfile;
+        }
+
+        function loadProfile(key) {
+            const p = profiles[key] || profiles['default'];
+            L.value = p.level || 1;
+            I.value = p.int || 0;
+            updateSpellMod();
+            updateBaseAvailability();
+            calc();
+        }
+
+        function saveCurrentProfile() {
+            profiles[currentProfile] = {
+                name: profiles[currentProfile]?.name || currentProfile,
+                level: parseInt(L.value) || 1,
+                int: parseInt(I.value) || 0
+            };
+            localStorage.setItem('dnd_profiles', JSON.stringify(profiles));
+        }
+
+        function switchProfile(key) {
+            currentProfile = key;
+            localStorage.setItem('dnd_currentProfile', key);
+            updateProfileList();
+            loadProfile(key);
+        }
+
+        profileSelect.addEventListener('change', () => {
+            saveCurrentProfile();
+            switchProfile(profileSelect.value);
+        });
+
+        newProfileBtn.addEventListener('click', () => {
+            const name = prompt('Имя нового персонажа:');
+            if (!name) return;
+            const key = Date.now().toString(36);
+            profiles[key] = { name, level: 1, int: 0 };
+            localStorage.setItem('dnd_profiles', JSON.stringify(profiles));
+            switchProfile(key);
+        });
+
+        deleteProfileBtn.addEventListener('click', () => {
+            if (Object.keys(profiles).length <= 1) return showToast('Нельзя удалить последний профиль');
+            if (!confirm('Удалить персонажа «' + profiles[currentProfile].name + '»?')) return;
+            delete profiles[currentProfile];
+            localStorage.setItem('dnd_profiles', JSON.stringify(profiles));
+            currentProfile = Object.keys(profiles)[0];
+            localStorage.setItem('dnd_currentProfile', currentProfile);
+            updateProfileList();
+            loadProfile(currentProfile);
+        });
+
+        L.addEventListener('change', saveCurrentProfile);
+        I.addEventListener('change', saveCurrentProfile);
+
+        // ---------- Настройки ----------
+        let settings = JSON.parse(localStorage.getItem('dnd_settings') || '{"theme":"dark","manaFormula":"level*3 + level*int"}');
+
+        function applyTheme(theme) {
+            if (theme === 'light') document.body.classList.add('light-theme');
+            else document.body.classList.remove('light-theme');
+            themeSelect.value = theme;
+        }
+
+        function calcMaxMana(level, intMod) {
+            // Безопасный парсинг формулы без eval
+            const formula = settings.manaFormula
+                .replace(/level/g, level)
+                .replace(/int/g, intMod)
+                .replace(/\s+/g, '');
+            // Простейшее вычисление: разрешаем только + - * / и скобки
+            try {
+                if (/^[\d\+\-\*\/\(\)\.]+$/.test(formula)) {
+                    const result = new Function('return ' + formula)();
+                    return Math.floor(result) || 0;
+                }
+            } catch (e) {}
+            return level * 3 + level * intMod;
+        }
+
+        applySettingsBtn.addEventListener('click', () => {
+            settings.theme = themeSelect.value;
+            settings.manaFormula = manaFormulaInput.value.trim() || 'level*3 + level*int';
+            localStorage.setItem('dnd_settings', JSON.stringify(settings));
+            applyTheme(settings.theme);
+            calc();
+            showToast('Настройки сохранены');
+        });
+
+        // ---------- Сохранённые заклинания ----------
         let spellsData = JSON.parse(localStorage.getItem('dnd_spells_v5') || '{"groups":{}}');
         function saveSpellsData() { localStorage.setItem('dnd_spells_v5', JSON.stringify(spellsData)); }
 
+        function renderSavedSpells() {
+            savedList.innerHTML = '';
+            const groups = spellsData.groups;
+            if (Object.keys(groups).length === 0) { savedList.textContent = 'Нет сохранённых заклинаний'; return; }
+            Object.keys(groups).forEach(group => {
+                const spells = groups[group];
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'saved-group';
+                groupDiv.innerHTML = `<h4>📁 ${group}</h4>`;
+                spells.forEach((spell, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'saved-spell-card';
+                    card.innerHTML = `
+                        <div class="ss-name">${spell.name}</div>
+                        ${spell.desc ? `<div class="ss-desc">${spell.desc}</div>` : ''}
+                        <div class="ss-details">
+                            <span>⚡ ${spell.mana}</span><span>🎯 ${spell.sl}</span>
+                            <span>🔥 ${spell.type}</span><span>🦴 ${spell.dice}</span>
+                            <span>⏱ ${spell.duration}</span>
+                        </div>
+                        <div class="saved-spell-actions">
+                            <button class="copy-saved-spell" data-group="${group}" data-index="${index}">Копировать</button>
+                            <button class="delete-spell" data-group="${group}" data-index="${index}">Удалить</button>
+                        </div>`;
+                    groupDiv.appendChild(card);
+                });
+                savedList.appendChild(groupDiv);
+            });
+            document.querySelectorAll('.copy-saved-spell').forEach(btn => btn.addEventListener('click', e => {
+                const group = e.target.dataset.group;
+                const index = parseInt(e.target.dataset.index);
+                copySavedSpell(group, index);
+            }));
+            document.querySelectorAll('.delete-spell').forEach(btn => btn.addEventListener('click', e => {
+                const group = e.target.dataset.group;
+                const index = parseInt(e.target.dataset.index);
+                deleteSpell(group, index);
+            }));
+        }
+
+        function updateGroupSelect() {
+            const groups = Object.keys(spellsData.groups);
+            groupSelect.innerHTML = '<option value="">-- Новая группа --</option>';
+            groups.forEach(g => { const opt = document.createElement('option'); opt.value = g; opt.textContent = g; groupSelect.appendChild(opt); });
+        }
+
+        function saveCurrentSpell() {
+            if (!S1.value) { showToast('Выберите основу заклинания'); return; }
+            calc();
+            const name = spellName.value.trim() || 'Без названия';
+            const desc = spellDesc.value.trim();
+            const spell = {
+                name, desc,
+                mana: rt.textContent, sl: rs.textContent,
+                type: previewMain.textContent, dice: previewDice.textContent,
+                duration: previewDuration.textContent, components: previewComponents.textContent,
+                modifiers: activeModsDiv.textContent, action: actionDisplay.textContent,
+                condition: actionCondition.value.trim()
+            };
+            let group = newGroupInput.value.trim();
+            if (!group) group = groupSelect.value;
+            if (!group) group = 'Общее';
+            if (!spellsData.groups[group]) spellsData.groups[group] = [];
+            spellsData.groups[group].push(spell);
+            saveSpellsData();
+            updateGroupSelect();
+            renderSavedSpells();
+            showToast('✅ Заклинание сохранено!');
+        }
+
+        function copySavedSpell(group, index) {
+            const spell = spellsData.groups[group][index];
+            if (!spell) return;
+            const text = `🎴 Заклинание: ${spell.name}\n📝 Описание: ${spell.desc || 'Описание не указано'}\n⚡ Действие: ${spell.action}${spell.condition ? ' ('+spell.condition+')' : ''}\n⚡ Мана: ${spell.mana} | СЛ: ${spell.sl}\n🔥 Тип/Эффект: ${spell.type}\n🦴 Кости/Параметр: ${spell.dice}\n⏱ Длительность: ${spell.duration}\n🧩 Компоненты: ${spell.components}\n🔧 Модификаторы: ${spell.modifiers}\nСохранено в Калькуляторе Маны v5.6`;
+            if (navigator.clipboard?.writeText) {
+                navigator.clipboard.writeText(text).then(() => showToast('✅ Заклинание скопировано!')).catch(() => fallbackCopy(text));
+            } else fallbackCopy(text);
+        }
+
+        function deleteSpell(group, index) {
+            spellsData.groups[group].splice(index, 1);
+            if (spellsData.groups[group].length === 0) delete spellsData.groups[group];
+            saveSpellsData();
+            updateGroupSelect();
+            renderSavedSpells();
+            showToast('🗑 Заклинание удалено');
+        }
+
+        // ---------- Вспомогательные функции ----------
         function getMaxBaseByLevel(level) {
             if (level >= 15) return 23; if (level >= 13) return 17; if (level >= 11) return 12;
             if (level >= 9) return 8; if (level >= 7) return 6; if (level >= 5) return 4;
@@ -598,6 +820,7 @@
             if (disableTime) updateTimeModifiers();
         }
 
+        // ---------- Основной расчёт ----------
         function calc() {
             if (!S1.value) {
                 r1.textContent = '—'; r2.textContent = '—'; r3.textContent = '—'; rt.textContent = '—';
@@ -606,7 +829,7 @@
             }
             const level = parseInt(L.value) || 1;
             const intMod = parseInt(I.value) || 0;
-            const maxMana = level * 3 + level * intMod;
+            const maxMana = calcMaxMana(level, intMod);
             const limitMana = Math.ceil(maxMana / 2);
             maxM.textContent = maxMana; limM.textContent = limitMana;
             updateSpellMod();
@@ -690,7 +913,7 @@
             }
             previewDuration.textContent = duration;
             previewComponents.textContent = comps.join(', ') || 'Нет';
-            compDetails.innerHTML = `<span style="color:#c084fc;">🗣 Голос:</span> ${verbal ? 'Да' : 'Нет'} &nbsp;|&nbsp; <span style="color:#c084fc;">✋ Жесты:</span> ${somatic ? 'Да' : 'Нет'}`;
+            compDetails.innerHTML = `<span style="color:var(--accent2);">🗣 Голос:</span> ${verbal ? 'Да' : 'Нет'} &nbsp;|&nbsp; <span style="color:var(--accent2);">✋ Жесты:</span> ${somatic ? 'Да' : 'Нет'}`;
             activeModsDiv.textContent = activeMods.length ? activeMods.join(', ') : 'Нет';
 
             actionDisplay.textContent = actionType;
@@ -715,7 +938,7 @@
             const mods = activeModsDiv.textContent === 'Нет' ? 'Нет' : activeModsDiv.textContent;
             const action = actionDisplay.textContent;
             const condition = action === 'Отложенное' ? actionCondition.value.trim() : '';
-            const text = `🎴 Заклинание: ${name}\n📝 Описание: ${desc}\n⚡ Действие: ${action}${condition ? ' ('+condition+')' : ''}\n⚡ Мана: ${rt.textContent} | СЛ: ${rs.textContent}\n🔥 Тип/Эффект: ${previewMain.textContent}\n🦴 Кости/Параметр: ${previewDice.textContent}\n⏱ Длительность: ${previewDuration.textContent}\n🧩 Компоненты: ${previewComponents.textContent}\n🔧 Модификаторы: ${mods}\nСоздано в Калькуляторе Маны v5.5`;
+            const text = `🎴 Заклинание: ${name}\n📝 Описание: ${desc}\n⚡ Действие: ${action}${condition ? ' ('+condition+')' : ''}\n⚡ Мана: ${rt.textContent} | СЛ: ${rs.textContent}\n🔥 Тип/Эффект: ${previewMain.textContent}\n🦴 Кости/Параметр: ${previewDice.textContent}\n⏱ Длительность: ${previewDuration.textContent}\n🧩 Компоненты: ${previewComponents.textContent}\n🔧 Модификаторы: ${mods}\nСоздано в Калькуляторе Маны v5.6`;
             if (navigator.clipboard?.writeText) {
                 navigator.clipboard.writeText(text).then(() => showToast('✅ Заклинание скопировано!')).catch(() => fallbackCopy(text));
             } else fallbackCopy(text);
@@ -735,96 +958,9 @@
             t._timeout = setTimeout(() => { t.style.opacity = '0'; setTimeout(() => { t.style.display = 'none'; }, 300); }, 2000);
         }
 
-        // Сохранение, загрузка, удаление (как в предыдущей версии, без изменений)
-        function copySavedSpell(group, index) {
-            const spell = spellsData.groups[group][index];
-            if (!spell) return;
-            const text = `🎴 Заклинание: ${spell.name}\n📝 Описание: ${spell.desc || 'Описание не указано'}\n⚡ Действие: ${spell.action}${spell.condition ? ' ('+spell.condition+')' : ''}\n⚡ Мана: ${spell.mana} | СЛ: ${spell.sl}\n🔥 Тип/Эффект: ${spell.type}\n🦴 Кости/Параметр: ${spell.dice}\n⏱ Длительность: ${spell.duration}\n🧩 Компоненты: ${spell.components}\n🔧 Модификаторы: ${spell.modifiers}\nСохранено в Калькуляторе Маны v5.5`;
-            if (navigator.clipboard?.writeText) {
-                navigator.clipboard.writeText(text).then(() => showToast('✅ Заклинание скопировано!')).catch(() => fallbackCopy(text));
-            } else fallbackCopy(text);
-        }
-
-        function renderSavedSpells() {
-            savedList.innerHTML = '';
-            const groups = spellsData.groups;
-            if (Object.keys(groups).length === 0) { savedList.textContent = 'Нет сохранённых заклинаний'; return; }
-            Object.keys(groups).forEach(group => {
-                const spells = groups[group];
-                const groupDiv = document.createElement('div');
-                groupDiv.className = 'saved-group';
-                groupDiv.innerHTML = `<h4>📁 ${group}</h4>`;
-                spells.forEach((spell, index) => {
-                    const card = document.createElement('div');
-                    card.className = 'saved-spell-card';
-                    card.innerHTML = `
-                        <div class="ss-name">${spell.name}</div>
-                        ${spell.desc ? `<div class="ss-desc">${spell.desc}</div>` : ''}
-                        <div class="ss-details">
-                            <span>⚡ ${spell.mana}</span><span>🎯 ${spell.sl}</span>
-                            <span>🔥 ${spell.type}</span><span>🦴 ${spell.dice}</span>
-                            <span>⏱ ${spell.duration}</span>
-                        </div>
-                        <div class="saved-spell-actions">
-                            <button class="copy-saved-spell" data-group="${group}" data-index="${index}">Копировать</button>
-                            <button class="delete-spell" data-group="${group}" data-index="${index}">Удалить</button>
-                        </div>`;
-                    groupDiv.appendChild(card);
-                });
-                savedList.appendChild(groupDiv);
-            });
-            document.querySelectorAll('.copy-saved-spell').forEach(btn => btn.addEventListener('click', e => {
-                const group = e.target.dataset.group;
-                const index = parseInt(e.target.dataset.index);
-                copySavedSpell(group, index);
-            }));
-            document.querySelectorAll('.delete-spell').forEach(btn => btn.addEventListener('click', e => {
-                const group = e.target.dataset.group;
-                const index = parseInt(e.target.dataset.index);
-                deleteSpell(group, index);
-            }));
-        }
-
-        function updateGroupSelect() {
-            const groups = Object.keys(spellsData.groups);
-            groupSelect.innerHTML = '<option value="">-- Новая группа --</option>';
-            groups.forEach(g => { const opt = document.createElement('option'); opt.value = g; opt.textContent = g; groupSelect.appendChild(opt); });
-        }
-
-        function saveCurrentSpell() {
-            if (!S1.value) { showToast('Выберите основу заклинания'); return; }
-            calc();
-            const name = spellName.value.trim() || 'Без названия';
-            const desc = spellDesc.value.trim();
-            const spell = {
-                name, desc,
-                mana: rt.textContent, sl: rs.textContent,
-                type: previewMain.textContent, dice: previewDice.textContent,
-                duration: previewDuration.textContent, components: previewComponents.textContent,
-                modifiers: activeModsDiv.textContent, action: actionDisplay.textContent,
-                condition: actionCondition.value.trim()
-            };
-            let group = newGroupInput.value.trim();
-            if (!group) group = groupSelect.value;
-            if (!group) group = 'Общее';
-            if (!spellsData.groups[group]) spellsData.groups[group] = [];
-            spellsData.groups[group].push(spell);
-            saveSpellsData();
-            updateGroupSelect();
-            renderSavedSpells();
-            showToast('✅ Заклинание сохранено!');
-        }
-
-        function deleteSpell(group, index) {
-            spellsData.groups[group].splice(index, 1);
-            if (spellsData.groups[group].length === 0) delete spellsData.groups[group];
-            saveSpellsData();
-            updateGroupSelect();
-            renderSavedSpells();
-            showToast('🗑 Заклинание удалено');
-        }
-
+        // ---------- Привязка событий ----------
         saveBtn.addEventListener('click', saveCurrentSpell);
+        copyBtn.addEventListener('click', copyText);
 
         L.addEventListener('input', () => { updateBaseAvailability(); updateSpellMod(); calc(); });
         I.addEventListener('input', () => { updateSpellMod(); calc(); });
@@ -858,9 +994,11 @@
             });
         });
 
-        copyBtn.addEventListener('click', copyText);
-
-        L.value = 1; I.value = 0;
+        // Инициализация
+        applyTheme(settings.theme);
+        manaFormulaInput.value = settings.manaFormula;
+        updateProfileList();
+        loadProfile(currentProfile);
         updateBaseAvailability();
         updateSpellMod();
         updateBoostAvailability();
@@ -872,4 +1010,3 @@
 </script>
 </body>
 </html>
-```
