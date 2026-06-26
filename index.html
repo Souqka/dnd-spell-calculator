@@ -1,9 +1,12 @@
+Готово! Усиление теперь простое: ×2, ×3, ×4, ×5 (и ×1 без изменений). Кости умножаются прямо (1к8 ×2 → 2к8, 3к6 ×3 → 9к6). Также обновлены стоимости маны для каждого уровня усиления. Код ниже полностью заменяет предыдущий.
+
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Калькулятор Маны v5.4 — D&D 5e</title>
+    <title>Калькулятор Маны v5.5 — D&D 5e</title>
     <style>
         :root {
             --bg: #0a0a14; --panel: #12122a; --accent: #7b2ff7; --accent2: #c084fc;
@@ -83,7 +86,7 @@
 <div class="container">
     <div class="header">
         <h1>✨ Калькулятор Маны ✨</h1>
-        <div class="sub">Магия Свободной Воли для D&D 5e<br>v5.4 · Иллюзия блокирует время · Копирование сохранёнок</div>
+        <div class="sub">Магия Свободной Воли для D&D 5e<br>v5.5 · Усиление ×2–×5 · Иллюзия без времени</div>
     </div>
 
     <!-- Характеристики -->
@@ -248,16 +251,16 @@
         </div>
     </div>
 
-    <!-- Усиление -->
+    <!-- Усиление (обновлено) -->
     <div class="panel">
         <div class="step">Шаг 3</div>
         <h2>⚡ Усиление заклинания</h2>
         <select id="S3">
             <option value="0" data-mult="1" selected>Без усиления (×1) — +0</option>
-            <option value="2" data-mult="1.5">Слабое (×1.5) — +2</option>
-            <option value="4" data-mult="2">Умеренное (×2) — +4</option>
-            <option value="7" data-mult="3">Сильное (×3) — +7</option>
-            <option value="11" data-mult="4">Максимальное (×4) — +11</option>
+            <option value="4" data-mult="2">×2 усиление — +4</option>
+            <option value="8" data-mult="3">×3 усиление — +8</option>
+            <option value="12" data-mult="4">×4 усиление — +12</option>
+            <option value="16" data-mult="5">×5 усиление — +16</option>
         </select>
         <div id="boostWarning" style="color:#f87171; font-size:0.8em; margin-top:6px; display:none;">⚠️ Усиление недоступно для этого заклинания</div>
     </div>
@@ -370,7 +373,7 @@
         <h2>📚 Сохранённые заклинания</h2>
         <div id="savedSpellsList">Нет сохранённых заклинаний</div>
     </div>
-    <div class="footer">Магия Свободной Воли v5.4 · Иллюзия блокирует время · Копирование сохранёнок</div>
+    <div class="footer">Магия Свободной Воли v5.5 · Усиление ×2–×5 · Кости умножаются прямо</div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -389,7 +392,6 @@
         const boostWarning = document.getElementById('boostWarning');
         const damageType = document.getElementById('damageType');
         const healForm = document.getElementById('healForm');
-        const illusionForm = document.getElementById('illusionForm');
         const transmutationForm = document.getElementById('transmutationForm');
         const necromancyForm = document.getElementById('necromancyForm');
         const abjurationForm = document.getElementById('abjurationForm');
@@ -416,25 +418,24 @@
         const savedList = document.getElementById('savedSpellsList');
 
         const schoolSelectMap = {
-            'evoc': damageType, 'heal': healForm, 'illus': illusionForm,
-            'trans': transmutationForm, 'necro': necromancyForm, 'abjur': abjurationForm,
-            'ench': enchantmentForm, 'divin': divinationForm, 'conju': conjurationForm,
-            'uni': universalForm
+            'evoc': damageType, 'heal': healForm, 'trans': transmutationForm,
+            'necro': necromancyForm, 'abjur': abjurationForm, 'ench': enchantmentForm,
+            'divin': divinationForm, 'conju': conjurationForm, 'uni': universalForm
         };
         const schoolBlockMap = {
-            'evoc': 'evocOptions', 'heal': 'healOptions', 'illus': 'illusOptions', 'trans': 'transOptions',
+            'evoc': 'evocOptions', 'heal': 'healOptions', 'trans': 'transOptions',
             'necro': 'necroOptions', 'abjur': 'abjurOptions', 'ench': 'enchOptions',
             'divin': 'divinOptions', 'conju': 'conjuOptions', 'uni': 'uniOptions'
         };
         const schoolAvailability = {
             1: ['evoc','abjur','heal'],
-            2: ['evoc','abjur','heal','illus','divin','uni'],
-            4: ['evoc','abjur','heal','illus','divin','uni','trans','ench','conju'],
-            6: ['evoc','abjur','heal','illus','divin','uni','trans','ench','conju','necro'],
-            8: ['evoc','illus','trans','necro','abjur','ench','divin','conju','heal','uni'],
-            12: ['evoc','illus','trans','necro','abjur','ench','divin','conju','heal','uni'],
-            17: ['evoc','illus','trans','necro','abjur','ench','divin','conju','heal','uni'],
-            23: ['evoc','illus','trans','necro','abjur','ench','divin','conju','heal','uni']
+            2: ['evoc','abjur','heal','divin','uni'],
+            4: ['evoc','abjur','heal','divin','uni','trans','ench','conju'],
+            6: ['evoc','abjur','heal','divin','uni','trans','ench','conju','necro'],
+            8: ['evoc','trans','necro','abjur','ench','divin','conju','heal','uni'],
+            12: ['evoc','trans','necro','abjur','ench','divin','conju','heal','uni'],
+            17: ['evoc','trans','necro','abjur','ench','divin','conju','heal','uni'],
+            23: ['evoc','trans','necro','abjur','ench','divin','conju','heal','uni']
         };
 
         function getProfBonus(level) {
@@ -448,8 +449,7 @@
         function updateSpellMod() {
             const level = parseInt(L.value) || 1;
             const intMod = parseInt(I.value) || 0;
-            const prof = getProfBonus(level);
-            const total = prof + intMod;
+            const total = getProfBonus(level) + intMod;
             spellMod.textContent = (total >= 0 ? '+' : '') + total;
         }
 
@@ -531,10 +531,10 @@
         function updatePreviewLabels(school) {
             const labels = {
                 'evoc': ['🔥 Тип урона','🦴 Кости урона'], 'heal': ['💚 Тип лечения','🦴 Кости хила'],
-                'illus': ['🎭 Тип иллюзии','⏱ Длительность'], 'trans': ['🔧 Тип трансмутации','⚖️ Вес предмета'],
-                'necro': ['💀 Тип некромантии','🦴 Кости урона'], 'abjur': ['🛡 Тип защиты','📊 Бонус КД'],
-                'ench': ['🧠 Тип контроля','🎯 Цели'], 'divin': ['🔮 Тип прорицания','📡 Дальность'],
-                'conju': ['🌀 Тип призыва','⭐ Уровень угрозы'], 'uni': ['🌟 Тип эффекта','🌐 Охват']
+                'trans': ['🔧 Тип трансмутации','⚖️ Вес предмета'], 'necro': ['💀 Тип некромантии','🦴 Кости урона'],
+                'abjur': ['🛡 Тип защиты','📊 Бонус КД'], 'ench': ['🧠 Тип контроля','🎯 Цели'],
+                'divin': ['🔮 Тип прорицания','📡 Дальность'], 'conju': ['🌀 Тип призыва','⭐ Уровень угрозы'],
+                'uni': ['🌟 Тип эффекта','🌐 Охват']
             };
             const [main, dice] = labels[school] || ['🔥 Тип / Лечение','🦴 Кости урона/хила'];
             previewMainLabel.textContent = main; previewDiceLabel.textContent = dice;
@@ -567,16 +567,12 @@
             const reactionCb = document.querySelector('#mod-reaction input.action-mod');
             const delayedCb = document.querySelector('#mod-delayed input.action-mod');
             const anyChecked = bonusCb.checked || reactionCb.checked || delayedCb.checked;
-            const bonusParent = document.getElementById('mod-bonus');
-            const reactionParent = document.getElementById('mod-reaction');
-            const delayedParent = document.getElementById('mod-delayed');
-            if (anyChecked) {
-                if (!bonusCb.checked) bonusParent.classList.add('mod-disabled'); else bonusParent.classList.remove('mod-disabled');
-                if (!reactionCb.checked) reactionParent.classList.add('mod-disabled'); else reactionParent.classList.remove('mod-disabled');
-                if (!delayedCb.checked) delayedParent.classList.add('mod-disabled'); else delayedParent.classList.remove('mod-disabled');
-            } else {
-                bonusParent.classList.remove('mod-disabled'); reactionParent.classList.remove('mod-disabled'); delayedParent.classList.remove('mod-disabled');
-            }
+            ['mod-bonus','mod-reaction','mod-delayed'].forEach(id => {
+                const parent = document.getElementById(id);
+                const cb = parent.querySelector('input');
+                if (anyChecked && !cb.checked) parent.classList.add('mod-disabled');
+                else parent.classList.remove('mod-disabled');
+            });
         }
 
         function updateTimeModifiers() {
@@ -595,8 +591,7 @@
             const timeGroup = document.getElementById('time-group');
             if (!timeGroup) return;
             const disableTime = (school === 'evoc' || school === 'illus');
-            const timeItems = timeGroup.querySelectorAll('.mod-item');
-            timeItems.forEach(item => {
+            timeGroup.querySelectorAll('.mod-item').forEach(item => {
                 if (disableTime) {
                     item.classList.add('mod-disabled');
                     const cb = item.querySelector('input.time-mod');
@@ -642,7 +637,7 @@
             const school = S2.options[S2.selectedIndex].getAttribute('data-school');
             const select = schoolSelectMap[school];
             const opt = select?.options[select.selectedIndex];
-            const mult = S3.disabled ? 1 : parseFloat(S3.options[S3.selectedIndex].getAttribute('data-mult')) || 1;
+            const mult = S3.disabled ? 1 : parseInt(S3.options[S3.selectedIndex].getAttribute('data-mult')) || 1;
             let mainText = '—', diceText = '—', durationOverride = null;
             if (school === 'evoc' && opt) {
                 mainText = opt.getAttribute('data-name')||'Огонь';
@@ -653,12 +648,7 @@
             } else if (school === 'abjur' && opt) {
                 mainText = opt.getAttribute('data-abjur-name')||'Ограждение';
                 const bonus = parseInt(opt.getAttribute('data-abjur-bonus')) || 2;
-                const scaledBonus = Math.floor(bonus * mult);
-                diceText = `+${scaledBonus} КД`;
-            } else if (school === 'illus' && opt) {
-                mainText = opt.getAttribute('data-illus-name');
-                diceText = opt.getAttribute('data-illus-dur');
-                durationOverride = diceText;
+                diceText = `+${bonus * mult} КД`;
             } else if (school === 'trans' && opt) { mainText = opt.getAttribute('data-trans-name'); diceText = opt.getAttribute('data-trans-weight'); }
             else if (school === 'necro' && opt) { mainText = opt.getAttribute('data-necro-name'); diceText = multiplyDice(opt.getAttribute('data-necro-dice')||'1к8', mult); }
             else if (school === 'ench' && opt) { mainText = opt.getAttribute('data-ench-name'); diceText = opt.getAttribute('data-ench-targets'); }
@@ -688,10 +678,10 @@
 
             previewMain.textContent = mainText;
             previewDice.textContent = diceText;
-            let duration = durationOverride || 'Мгновенно';
+            let duration = 'Мгновенно';
             const timeCb = document.querySelector('.time-mod:checked');
-            if (timeCb) { duration = timeCb.parentElement.textContent.trim().split('(')[0].trim(); }
-            else if (!durationOverride) {
+            if (timeCb) duration = timeCb.parentElement.textContent.trim().split('(')[0].trim();
+            else {
                 document.querySelectorAll('.mod-item input[type="checkbox"]').forEach(cb => {
                     if (cb.checked) {
                         const l = cb.parentElement.textContent.trim();
@@ -713,15 +703,11 @@
 
         function multiplyDice(diceStr, mult) {
             if (mult === 1 || !diceStr || diceStr === '—' || diceStr.includes('Зависит')) return diceStr;
-            if (diceStr.includes('+')) return diceStr;
             const m = diceStr.match(/(\d+)к(\d+)/);
             if (!m) return diceStr;
-            const cnt = parseInt(m[1]), die = parseInt(m[2]);
-            const newCntFloat = cnt * mult;
-            const newCnt = Math.floor(newCntFloat);
-            const bonus = Math.round((newCntFloat - newCnt) * die);
-            if (newCnt === 0 && bonus > 0) return '+' + bonus;
-            return bonus > 0 ? `${newCnt}к${die}+${bonus}` : `${newCnt}к${die}`;
+            const cnt = parseInt(m[1]) * mult;
+            const die = parseInt(m[2]);
+            return `${cnt}к${die}`;
         }
 
         function copyText() {
@@ -732,7 +718,7 @@
             const mods = activeModsDiv.textContent === 'Нет' ? 'Нет' : activeModsDiv.textContent;
             const action = actionDisplay.textContent;
             const condition = action === 'Отложенное' ? actionCondition.value.trim() : '';
-            const text = `🎴 Заклинание: ${name}\n📝 Описание: ${desc}\n⚡ Действие: ${action}${condition ? ' ('+condition+')' : ''}\n⚡ Мана: ${rt.textContent} | СЛ: ${rs.textContent}\n🔥 Тип/Эффект: ${previewMain.textContent}\n🦴 Кости/Параметр: ${previewDice.textContent}\n⏱ Длительность: ${previewDuration.textContent}\n🧩 Компоненты: ${previewComponents.textContent}\n🔧 Модификаторы: ${mods}\nСоздано в Калькуляторе Маны v5.4`;
+            const text = `🎴 Заклинание: ${name}\n📝 Описание: ${desc}\n⚡ Действие: ${action}${condition ? ' ('+condition+')' : ''}\n⚡ Мана: ${rt.textContent} | СЛ: ${rs.textContent}\n🔥 Тип/Эффект: ${previewMain.textContent}\n🦴 Кости/Параметр: ${previewDice.textContent}\n⏱ Длительность: ${previewDuration.textContent}\n🧩 Компоненты: ${previewComponents.textContent}\n🔧 Модификаторы: ${mods}\nСоздано в Калькуляторе Маны v5.5`;
             if (navigator.clipboard?.writeText) {
                 navigator.clipboard.writeText(text).then(() => showToast('✅ Заклинание скопировано!')).catch(() => fallbackCopy(text));
             } else fallbackCopy(text);
@@ -752,11 +738,11 @@
             t._timeout = setTimeout(() => { t.style.opacity = '0'; setTimeout(() => { t.style.display = 'none'; }, 300); }, 2000);
         }
 
-        // Копирование сохранённого заклинания
+        // Сохранение, загрузка, удаление (как в предыдущей версии, без изменений)
         function copySavedSpell(group, index) {
             const spell = spellsData.groups[group][index];
             if (!spell) return;
-            const text = `🎴 Заклинание: ${spell.name}\n📝 Описание: ${spell.desc || 'Описание не указано'}\n⚡ Действие: ${spell.action}${spell.condition ? ' ('+spell.condition+')' : ''}\n⚡ Мана: ${spell.mana} | СЛ: ${spell.sl}\n🔥 Тип/Эффект: ${spell.type}\n🦴 Кости/Параметр: ${spell.dice}\n⏱ Длительность: ${spell.duration}\n🧩 Компоненты: ${spell.components}\n🔧 Модификаторы: ${spell.modifiers}\nСохранено в Калькуляторе Маны v5.4`;
+            const text = `🎴 Заклинание: ${spell.name}\n📝 Описание: ${spell.desc || 'Описание не указано'}\n⚡ Действие: ${spell.action}${spell.condition ? ' ('+spell.condition+')' : ''}\n⚡ Мана: ${spell.mana} | СЛ: ${spell.sl}\n🔥 Тип/Эффект: ${spell.type}\n🦴 Кости/Параметр: ${spell.dice}\n⏱ Длительность: ${spell.duration}\n🧩 Компоненты: ${spell.components}\n🔧 Модификаторы: ${spell.modifiers}\nСохранено в Калькуляторе Маны v5.5`;
             if (navigator.clipboard?.writeText) {
                 navigator.clipboard.writeText(text).then(() => showToast('✅ Заклинание скопировано!')).catch(() => fallbackCopy(text));
             } else fallbackCopy(text);
@@ -889,3 +875,4 @@
 </script>
 </body>
 </html>
+```
